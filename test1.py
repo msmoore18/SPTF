@@ -70,6 +70,21 @@ with col1:
     fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
     st.plotly_chart(fig)
 
+st.write("### Modify Tree Count")
+selected_lot = st.selectbox("Select Lot", options=data["Lot"].unique())
+selected_row = st.selectbox("Select Row", options=data[data["Lot"] == selected_lot]["Row"].unique())
+selected_quality = st.selectbox("Select Quality", options=data["Quality"].unique())
+selected_height = st.number_input("Tree Height (ft)", min_value=1, step=1)
+new_count = st.number_input("New Tree Count", min_value=0, step=1)
+x_position = st.number_input("X Position", step=1.0)
+y_position = st.number_input("Y Position", step=1.0)
+
+if st.button("Update Tree Count"):
+    data.loc[(data["Lot"] == selected_lot) & (data["Row"] == selected_row) & (data["Quality"] == selected_quality) & (data["Tree Height (ft)"] == selected_height), ["Count", "X Position", "Y Position"]] = [new_count, x_position, y_position]
+    data.to_excel("SPTF_Tree_Count.xlsx", index=False)
+    st.success("Tree count updated successfully!")
+    st.dataframe(data)  # Display updated data
+
 with col2:
     # Display Image
     st.image("SPTF.png", width=375)
