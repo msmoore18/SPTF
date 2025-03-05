@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import matplotlib.pyplot as plt
 
 # Sample data
 data = pd.DataFrame({
@@ -15,5 +15,8 @@ st.dataframe(data)
 
 # Bar Chart: Tree Height
 st.write("### Tree Height by Lot")
-fig = px.bar(data, x="Lot", y="Height", labels={"Lot": "Lot Number", "Height": "Tree Height"})
-st.plotly_chart(fig)
+fig, ax = plt.subplots()
+data.groupby("Lot")["Height"].sum().plot(kind="bar", ax=ax)
+ax.set_xlabel("Lot Number")
+ax.set_ylabel("Total Tree Height")
+st.pyplot(fig)
