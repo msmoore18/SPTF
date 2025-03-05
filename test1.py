@@ -50,6 +50,7 @@ col1, col2 = st.columns([2, 2])
 with col1:
     # Bar Chart: Tree Count vs Tree Height
     st.write("### Tree Count vs Tree Height")
+    height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
     fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', 
                  labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'}, 
                  hover_data={'Tree Height (ft)': True, 'Count': True})
@@ -57,6 +58,7 @@ with col1:
 
     # Bar Chart: Tree Count vs Row
     st.write("### Tree Count vs Row")
+    row_group = filtered_data.groupby("Row")["Count"].sum()
     fig = px.bar(row_group.reset_index(), x='Row', y='Count', 
                  labels={'Row': 'Row', 'Count': 'Tree Count'}, 
                  hover_data={'Row': True, 'Count': True})
