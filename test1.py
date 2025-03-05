@@ -74,17 +74,6 @@ if page == "Bob's Page":
         st.image("SPTF.png", width=375)
 
 elif page == "Rudy's Page":
-    # Filter trees that need to be cut (Quality = 'C')
-    trees_to_cut = filtered_data[filtered_data['Quality'] == 'C']
-    
-    # Display Summary
-    st.write("### Trees to Cut Down (Quality C)")
-    if not trees_to_cut.empty:
-        trees_to_cut = trees_to_cut.dropna(subset=['Count'])
-        st.dataframe(trees_to_cut[['Lot', 'Row', 'Count']])
-    else:
-        st.write("No trees need to be cut down.")
-    
     
     # Layout: Main content on left, image on right
     col1, col2 = st.columns([4, 2])
