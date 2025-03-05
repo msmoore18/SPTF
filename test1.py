@@ -1,14 +1,6 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-
-# Ensure required libraries are installed
-try:
-    import matplotlib.pyplot as plt
-except ModuleNotFoundError:
-    import subprocess
-    subprocess.run(["pip", "install", "matplotlib"])
-    import matplotlib.pyplot as plt
+import plotly.express as px
 
 # File uploader
 st.sidebar.header("Upload Excel File")
@@ -32,27 +24,18 @@ if uploaded_file:
 
     # Bar Chart: Number of Trees by Location
     st.write("### Number of Trees by Location")
-    fig, ax = plt.subplots()
-    filtered_data["Location"].value_counts().plot(kind="bar", ax=ax)
-    ax.set_xlabel("Location")
-    ax.set_ylabel("Number of Trees")
-    st.pyplot(fig)
+    fig = px.bar(filtered_data["Location"].value_counts().reset_index(), x="index", y="Location", labels={"index": "Location", "Location": "Number of Trees"})
+    st.plotly_chart(fig)
 
     # Bar Chart: Number of Trees by Quality
     st.write("### Number of Trees by Quality")
-    fig, ax = plt.subplots()
-    filtered_data["Quality"].value_counts().plot(kind="bar", ax=ax)
-    ax.set_xlabel("Quality")
-    ax.set_ylabel("Number of Trees")
-    st.pyplot(fig)
+    fig = px.bar(filtered_data["Quality"].value_counts().reset_index(), x="index", y="Quality", labels={"index": "Quality", "Quality": "Number of Trees"})
+    st.plotly_chart(fig)
 
-    # Bar Chart: Tree Height Distribution
+    # Histogram: Tree Height Distribution
     st.write("### Tree Height Distribution")
-    fig, ax = plt.subplots()
-    filtered_data["Height"].hist(bins=10, ax=ax)
-    ax.set_xlabel("Height")
-    ax.set_ylabel("Number of Trees")
-    st.pyplot(fig)
+    fig = px.histogram(filtered_data, x="Height", nbins=10, labels={"Height": "Tree Height"})
+    st.plotly_chart(fig)
 
     st.write("### Summary Statistics")
     st.write(filtered_data.describe())
