@@ -9,7 +9,7 @@ st.set_page_config(layout="wide")
 # Load data from Excel file in the same GitHub repository
 @st.cache_data
 def load_data():
-    return pd.read_excel("SPTF_Count.xlsx")  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
+    return pd.read_excel("SPTF_Tree_Count.xlsx")  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
 
 data = load_data()
 
@@ -74,6 +74,25 @@ if page == "Bob's Page":
         st.image("SPTF.png", width=375)
 
 elif page == "Rudy's Page":
+    # Filter trees that need to be cut (Quality = 'C')
+    trees_to_cut = filtered_data[filtered_data['Quality'] == 'C']
+    
+    # Display Summary
+    st.write("### Trees to Cut Down (Quality C)")
+    if not trees_to_cut.empty:
+        st.dataframe(trees_to_cut[['Lot', 'Row', 'Tree Height (ft)', 'Count']])
+    else:
+        st.write("No trees need to be cut down.")
+    
+    # Visual Representation: Tree Locations
+    st.write("### Tree Locations for Cutting")
+    if not trees_to_cut.empty:
+        fig = px.scatter(trees_to_cut, x='X Position', y='Y Position', color='Tree Height (ft)', size='Count', 
+                         hover_data=['Lot', 'Row', 'Tree Height (ft)', 'Count'], 
+                         labels={'X Position': 'X Coordinate', 'Y Position': 'Y Coordinate'}, title='Tree Cut Locations')
+        st.plotly_chart(fig)
+    else:
+        st.write("No trees to display.")
     # Layout: Main content on left, image on right
     col1, col2 = st.columns([4, 2])
 
