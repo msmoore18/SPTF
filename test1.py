@@ -15,7 +15,7 @@ data = load_data()
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Manager View", "Farmer View"])
+page = st.sidebar.radio("Go to", ["Bob's Page", "Rudy's Page"])
 
 # Sidebar for filters
 st.sidebar.header("Filter Options")
@@ -49,7 +49,7 @@ filtered_data = data[
     (data["Quality"].isin(quality_options))
 ]
 
-if page == "Manager View":
+if page == "Bob's Page":
     # Layout: Main content on left, image on right
     col1, col2 = st.columns([4, 2])
 
@@ -73,7 +73,7 @@ if page == "Manager View":
         # Display Image
         st.image("SPTF.png", width=375)
 
-elif page == "Farmer View":
+elif page == "Rudy's Page":
     # Layout: Main content on left, image on right
     col1, col2 = st.columns([4, 2])
 
@@ -88,4 +88,3 @@ elif page == "Farmer View":
     with col2:
         # Display Image
         st.image("SPTF.png", width=375)
-
