@@ -2,21 +2,42 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Sample data
-data = pd.DataFrame({
-    "Lot": [1, 1, 1, 2, 2],
-    "Height": [12, 24, 12, 24, 24],
-    "Quality": ["A", "A", "A", "B", "A"]
-})
+# Load data from Excel file in the same GitHub repository
+@st.cache_data
+def load_data():
+    return pd.read_excel("data.xlsx")  # Ensure 'data.xlsx' is in the same repo
 
-# Display data
-st.write("### Tree Data")
-st.dataframe(data)
+data = load_data()
 
-# Bar Chart: Tree Height
-st.write("### Tree Height by Lot")
-fig, ax = plt.subplots()
-data.groupby("Lot")["Height"].sum().plot(kind="bar", ax=ax)
-ax.set_xlabel("Lot Number")
-ax.set_ylabel("Total Tree Height")
-st.pyplot(fig)
+# Sidebar for lot selection
+st.sidebar.header("Filter Options")
+lots = st.sidebar.multiselect("Select Lots", options=data["Lot"].unique(), default=data["Lot"].unique())
+
+# Filter data based on selected lots
+filtered_data = data[data["Lot"].isin(lots)]
+
+# Layout: Main content on left, image on right
+col1, col2 = st.columns([3, 1])
+
+with col1:
+    # Bar Chart: Tree Count vs Tree Height
+    st.write("### Tree Count vs Tree Height")
+    fig, ax = plt.subplots()
+    height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
+    height_group.plot(kind="bar", ax=ax)
+    ax.set_xlabel("Tree Height (ft)")
+    ax.set_ylabel("Tree Count")
+    st.pyplot(fig)
+
+    # Bar Chart: Tree Count vs Row
+    st.write("### Tree Count vs Row")
+    fig, ax = plt.subplots()
+    row_group = filtered_data.groupby("Row")["Count"].sum()
+    row_group.plot(kind="bar", ax=ax)
+    ax.set_xlabel("Row")
+    ax.set_ylabel("Tree Count")
+    st.pyplot(fig)
+
+with col2:
+    # Display Image
+    st.image("SPFT.png", use_column_width=True)
