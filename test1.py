@@ -80,7 +80,7 @@ elif page == "Rudy's Page":
 
     with col1:
         # Bar Chart: Tree Count vs Row (Stacked by Quality)
-        st.write(f"### Lot {lots} Tree Height")
+        st.write(f"### Lot {lots} Tree Count")
         row_group = filtered_data.groupby(["Row", "Quality"])["Count"].sum().reset_index()
         fig = px.bar(row_group, x='Row', y='Count', color='Quality', barmode='stack', labels={'Row': 'Row', 'Count': 'Tree Count', 'Quality': 'Quality'}, hover_data={'Row': True, 'Count': True, 'Quality': True})
         fig.update_layout(xaxis=dict(tickmode='linear'))
