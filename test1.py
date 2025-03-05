@@ -40,4 +40,24 @@ with col1:
 
 with col2:
     # Display Image
-    st.image("SPTF.png", use_container_width=True)
+    st.image("SPTF.png", use_container_width=True, output_format="auto")
+    
+    # Increase image size (3x bigger using markdown styling)
+    st.markdown("""
+    <style>
+        img {
+            transform: scale(3);
+        }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Overlay clickable buttons on image
+    st.write("### Click on a Lot to Filter Data")
+    colA, colB, colC = st.columns(3)
+    
+    if colA.button("Lot 1"):
+        filtered_data = data[data["Lot"] == 1]
+    if colB.button("Lot 2"):
+        filtered_data = data[data["Lot"] == 2]
+    if colC.button("All Lots"):
+        filtered_data = data
