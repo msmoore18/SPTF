@@ -64,4 +64,4 @@ with col1:
 
 with col2:
     # Display Image
-    st.image("SPTF.png", width=500)
+    st.image("SPTF.png", width=375)
