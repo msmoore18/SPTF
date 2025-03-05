@@ -9,7 +9,7 @@ st.set_page_config(layout="wide")
 # Load data from Excel file in the same GitHub repository
 @st.cache_data
 def load_data():
-    return pd.read_excel("SPTF_Tree_Count.xlsx")  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
+    return pd.read_excel("SPTF_Count.xlsx")  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
 
 data = load_data()
 
