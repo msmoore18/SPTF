@@ -44,7 +44,7 @@ else:
 
 # Filter data based on selected filters
 filtered_data = data[
-    (data["Lot"].isin(lots)) &
+    (data["Lot"].isin([lots]) if isinstance(lots, int) else data["Lot"].isin(lots)) &
     (data["Tree Height (ft)"].between(height_range[0], height_range[1])) &
     (data["Quality"].isin(quality_options))
 ]
