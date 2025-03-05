@@ -49,8 +49,8 @@ with col1:
     # Bar Chart: Tree Count vs Tree Height
     st.write("### Tree Count vs Tree Height")
     height_group = filtered_data.groupby(["Tree Height (ft)", "Quality"])["Count"].sum().reset_index()
-    height_group["Total Height"] = height_group.groupby("Tree Height (ft)")["Count"].transform("sum")
-    fig = px.bar(height_group, x='Tree Height (ft)', y='Count', color='Quality', barmode='stack', hover_data={'Tree Height (ft)': True, 'Count': True, 'Total Height': True}, 
+    height_group["Total Trees"] = height_group.groupby("Tree Height (ft)")["Count"].transform("sum")
+    fig = px.bar(height_group, x='Tree Height (ft)', y='Count', color='Quality', barmode='stack', hover_data={'Tree Height (ft)': True, 'Count': True, 'Total Trees': True}, 
                  labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'})
     st.plotly_chart(fig)
 
