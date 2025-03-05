@@ -37,7 +37,7 @@ quality_options = st.sidebar.multiselect(
     options=data["Quality"].unique(),
     default=data["Quality"].unique()
 )
-if page == "Farmer View":
+if page == "Rudy's Page":
     lots = st.sidebar.selectbox("Select Lot", options=data["Lot"].unique())
 else:
     lots = st.sidebar.multiselect("Select Lots", options=data["Lot"].unique(), default=data["Lot"].unique())
