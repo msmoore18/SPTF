@@ -79,7 +79,7 @@ elif page == "Farmer View":
 
     with col1:
         # Bar Chart: Tree Count vs Row (Stacked by Quality)
-        st.write("### Tree Count vs Row")
+        st.write(f"### Lot {lots}")
         row_group = filtered_data.groupby(["Row", "Quality"])["Count"].sum().reset_index()
         fig = px.bar(row_group, x='Row', y='Count', color='Quality', barmode='stack', labels={'Row': 'Row', 'Count': 'Tree Count', 'Quality': 'Quality'}, hover_data={'Row': True, 'Count': True, 'Quality': True})
         fig.update_layout(xaxis=dict(tickmode='linear'))
