@@ -64,9 +64,10 @@ with col1:
 
 with col1:
     # Pie Chart: Tree Count by Height Range
+    st.write("### Tree Count vs Height")
     height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
     height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
-    fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count", title="Tree Count by Height Range")
+    fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
     st.plotly_chart(fig)
 
 with col2:
