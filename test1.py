@@ -50,7 +50,7 @@ with col1:
     st.write("### Tree Count vs Tree Height")
     height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
     
-    fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', hover_data={'Tree Height (ft)': True, 'Count': True}, 
+    fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', hover_data={'Tree Height (ft)': True, 'Count': True}, category_orders={'Tree Height (ft)': sorted(data['Tree Height (ft)'].unique())}, tickmode='array', tickvals=sorted(data['Tree Height (ft)'].unique()), 
                  labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'})
     st.plotly_chart(fig)
 
