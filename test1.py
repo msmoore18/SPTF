@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # Load data from Excel file in the same GitHub repository
 @st.cache_data
 def load_data():
-    return pd.read_excel("data.xlsx")  # Ensure 'data.xlsx' is in the same repo
+    return pd.read_excel("SPTF_Tree_Count.xlsx")  # Ensure 'data.xlsx' is in the same repo
 
 data = load_data()
 
@@ -40,4 +40,4 @@ with col1:
 
 with col2:
     # Display Image
-    st.image("SPFT.png", use_container_width=True)
+    st.image("SPTF.png", use_container_width=True)
