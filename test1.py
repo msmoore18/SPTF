@@ -37,7 +37,10 @@ quality_options = st.sidebar.multiselect(
     options=data["Quality"].unique(),
     default=data["Quality"].unique()
 )
-lots = st.sidebar.multiselect("Select Lots", options=data["Lot"].unique(), default=data["Lot"].unique())
+if page == "Farmer View":
+    lots = st.sidebar.selectbox("Select Lot", options=data["Lot"].unique())
+else:
+    lots = st.sidebar.multiselect("Select Lots", options=data["Lot"].unique(), default=data["Lot"].unique())
 
 # Filter data based on selected filters
 filtered_data = data[
