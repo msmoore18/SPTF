@@ -54,13 +54,14 @@ with col1:
                  hover_data={'Tree Height (ft)': True, 'Count': True})
     st.plotly_chart(fig)
 
-    # Bar Chart: Tree Count vs Row
-    st.write("### Tree Count vs Row")
-    row_group = filtered_data.groupby("Row")["Count"].sum()
-    fig = px.bar(row_group.reset_index(), x='Row', y='Count', 
-                 labels={'Row': 'Row', 'Count': 'Tree Count'}, 
-                 hover_data={'Row': True, 'Count': True})
-    st.plotly_chart(fig)
+        # Bar Chart: Tree Count vs Row (only if one lot is selected)
+    if len(lots) == 1:
+        st.write("### Tree Count vs Row")
+        row_group = filtered_data.groupby("Row")["Count"].sum()
+        fig = px.bar(row_group.reset_index(), x='Row', y='Count', 
+                     labels={'Row': 'Row', 'Count': 'Tree Count'}, 
+                     hover_data={'Row': True, 'Count': True})
+        st.plotly_chart(fig)
 
 with col2:
     # Display Image
