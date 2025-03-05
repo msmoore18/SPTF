@@ -58,7 +58,7 @@ with col1:
     if len(lots) == 1:
         st.write("### Tree Count vs Row")
         row_group = filtered_data.groupby("Row")["Count"].sum()
-        fig = px.bar(row_group.reset_index(), x='Row', y='Count', 
+        fig = px.bar(row_group.reset_index(), x='Row', y='Count', category_orders={'Row': sorted(row_group.index)}, tickmode='array', tickvals=row_group.index, 
                      labels={'Row': 'Row', 'Count': 'Tree Count'}, 
                      hover_data={'Row': True, 'Count': True})
         st.plotly_chart(fig)
