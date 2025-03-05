@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 # Load data from Excel file in the same GitHub repository
 @st.cache_data
@@ -49,21 +50,17 @@ col1, col2 = st.columns([2, 2])
 with col1:
     # Bar Chart: Tree Count vs Tree Height
     st.write("### Tree Count vs Tree Height")
-    fig, ax = plt.subplots()
-    height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
-    height_group.plot(kind="bar", ax=ax)
-    ax.set_xlabel("Tree Height (ft)")
-    ax.set_ylabel("Tree Count")
-    st.pyplot(fig)
+    fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', 
+                 labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'}, 
+                 hover_data={'Tree Height (ft)': True, 'Count': True})
+    st.plotly_chart(fig)
 
     # Bar Chart: Tree Count vs Row
     st.write("### Tree Count vs Row")
-    fig, ax = plt.subplots()
-    row_group = filtered_data.groupby("Row")["Count"].sum()
-    row_group.plot(kind="bar", ax=ax)
-    ax.set_xlabel("Row")
-    ax.set_ylabel("Tree Count")
-    st.pyplot(fig)
+    fig = px.bar(row_group.reset_index(), x='Row', y='Count', 
+                 labels={'Row': 'Row', 'Count': 'Tree Count'}, 
+                 hover_data={'Row': True, 'Count': True})
+    st.plotly_chart(fig)
 
 with col2:
     # Display Image
