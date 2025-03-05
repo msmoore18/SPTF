@@ -84,15 +84,7 @@ elif page == "Rudy's Page":
     else:
         st.write("No trees need to be cut down.")
     
-    # Visual Representation: Tree Locations
-    st.write("### Tree Locations for Cutting")
-    if not trees_to_cut.empty:
-        fig = px.scatter(trees_to_cut, x='X Position', y='Y Position', color='Tree Height (ft)', size='Count', 
-                         hover_data=['Lot', 'Row', 'Tree Height (ft)', 'Count'], 
-                         labels={'X Position': 'X Coordinate', 'Y Position': 'Y Coordinate'}, title='Tree Cut Locations')
-        st.plotly_chart(fig)
-    else:
-        st.write("No trees to display.")
+    
     # Layout: Main content on left, image on right
     col1, col2 = st.columns([4, 2])
 
