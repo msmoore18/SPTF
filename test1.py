@@ -45,7 +45,7 @@ filtered_data = data[
 ]
 
 # Layout: Main content on left, image on right
-col1, col2 = st.columns([4, 2])
+row0_spacer1, col1, row0_spacer2, col2, row0_spacer3 = st.columns((0.1, 3, 0.2, 2, 0.1))
 
 with col1:
     # Bar Chart: Tree Count vs Tree Height
