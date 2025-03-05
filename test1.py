@@ -79,7 +79,7 @@ elif page == "Rudy's Page":
     
     # Display Summary
     st.write("### Trees to Cut Down (Quality C)")
-        if not trees_to_cut.empty:
+    if not trees_to_cut.empty:
         trees_to_cut = trees_to_cut.dropna(subset=['Count'])
         st.dataframe(trees_to_cut[['Lot', 'Row', 'Count']])
     else:
