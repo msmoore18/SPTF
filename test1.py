@@ -40,4 +40,4 @@ with col1:
 
 with col2:
     # Display Image
-    st.image("SPFT.png", use_column_width=True)
+    st.image("SPTF.png", use_column_width=True)
