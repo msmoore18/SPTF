@@ -3,6 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
 
+# Reduce side margins
+st.set_page_config(layout="wide")
+
 # Load data from Excel file in the same GitHub repository
 @st.cache_data
 def load_data():
@@ -38,14 +41,9 @@ filtered_data = data[
     (data["Tree Height (ft)"].between(height_range[0], height_range[1])) &
     (data["Quality"].isin(quality_options))
 ]
-filtered_data = data[
-    (data["Lot"].isin(lots)) &
-    (data["Tree Height (ft)"].between(height_range[0], height_range[1])) &
-    (data["Quality"].isin(quality_options))
-]
 
 # Layout: Main content on left, image on right
-row0_spacer1, col1, row0_spacer2, col2, row0_spacer3 = st.columns((0.1, 3, 0.2, 2, 0.1))
+col1, col2 = st.columns([4, 2])
 
 with col1:
     # Bar Chart: Tree Count vs Tree Height
