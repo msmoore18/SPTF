@@ -51,7 +51,7 @@ with col1:
     height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
     
     fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', hover_data={'Tree Height (ft)': True, 'Count': True}, category_orders={'Tree Height (ft)': sorted(data['Tree Height (ft)'].unique())}, labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'})
-    fig.update_layout(xaxis=dict(tickmode='linear'))
+    fig.update_layout(xaxis=dict(tickmode='linear', tickmode='array', tickvals=height_group.index))
     st.plotly_chart(fig)
 
         # Bar Chart: Tree Count vs Row (only if one lot is selected)
@@ -66,4 +66,3 @@ with col2:
     # Display Image
     st.image("SPTF.png", width=375)
   
-
