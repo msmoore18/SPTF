@@ -52,6 +52,7 @@ with col1:
     
     fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', hover_data={'Tree Height (ft)': True, 'Count': True}, category_orders={'Tree Height (ft)': sorted(data['Tree Height (ft)'].unique())}, labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'})
     st.plotly_chart(fig)
+    fig.update_layout(xaxis=dict(tickmode='linear'))
 
         # Bar Chart: Tree Count vs Row (only if one lot is selected)
     if len(lots) == 1:
