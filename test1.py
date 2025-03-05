@@ -62,6 +62,14 @@ with col1:
         fig.update_layout(xaxis=dict(tickmode='linear'))
         st.plotly_chart(fig)
 
+with col1:
+    # Pie Chart: Tree Count by Height Range
+    st.write("### Tree Count by Height Range")
+    height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
+    height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
+    fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count", title="Tree Count by Height Range")
+    st.plotly_chart(fig)
+
 with col2:
     # Display Image
     st.image("SPTF.png", width=375)
