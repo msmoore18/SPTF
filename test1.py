@@ -59,11 +59,10 @@ with col1:
         st.write("### Tree Count vs Row")
         row_group = filtered_data.groupby("Row")["Count"].sum()
         fig = px.bar(row_group.reset_index(), x='Row', y='Count', labels={'Row': 'Row', 'Count': 'Tree Count'}, hover_data={'Row': True, 'Count': True})
-        fig.update_layout(xaxis=dict(tickmode='linear')) 
-                     labels={'Row': 'Row', 'Count': 'Tree Count'}, 
-                     hover_data={'Row': True, 'Count': True})
+        fig.update_layout(xaxis=dict(tickmode='linear'))
         st.plotly_chart(fig)
 
 with col2:
     # Display Image
     st.image("SPTF.png", width=375)
+
