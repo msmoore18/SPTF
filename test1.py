@@ -2,6 +2,14 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Ensure required libraries are installed
+try:
+    import matplotlib.pyplot as plt
+except ModuleNotFoundError:
+    import subprocess
+    subprocess.run(["pip", "install", "matplotlib"])
+    import matplotlib.pyplot as plt
+
 # File uploader
 st.sidebar.header("Upload Excel File")
 uploaded_file = st.sidebar.file_uploader("Upload your tree farm data", type=["xlsx"])
