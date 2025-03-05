@@ -37,7 +37,11 @@ filtered_data = data[
     (data["Tree Height (ft)"].between(height_range[0], height_range[1])) &
     (data["Quality"].isin(quality_options))
 ]
-filtered_data = data[data["Lot"].isin(lots)]
+filtered_data = data[
+    (data["Lot"].isin(lots)) &
+    (data["Tree Height (ft)"].between(height_range[0], height_range[1])) &
+    (data["Quality"].isin(quality_options))
+]
 
 # Layout: Main content on left, image on right
 col1, col2 = st.columns([3, 1])
