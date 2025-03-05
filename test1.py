@@ -40,13 +40,13 @@ with col1:
 
 with col2:
     # Display Image
-    st.image("SPTF.png", use_container_width=True, output_format="auto")
+    st.image("SPTF.png", width=300, output_format="auto")
     
     # Increase image size (3x bigger using markdown styling)
     st.markdown("""
     <style>
         img {
-            transform: scale(3);
+            transform: scale(1);
         }
     </style>
     """, unsafe_allow_html=True)
@@ -55,9 +55,16 @@ with col2:
     st.write("### Click on a Lot to Filter Data")
     colA, colB, colC = st.columns(3)
     
-    if colA.button("Lot 1"):
-        filtered_data = data[data["Lot"] == 1]
-    if colB.button("Lot 2"):
-        filtered_data = data[data["Lot"] == 2]
-    if colC.button("All Lots"):
+    lot_1 = colA.checkbox("Lot 1", value=True)
+    lot_2 = colB.checkbox("Lot 2", value=True)
+    all_lots = colC.checkbox("All Lots", value=False)
+    
+    selected_lots = []
+    if lot_1:
+        selected_lots.append(1)
+    if lot_2:
+        selected_lots.append(2)
+    if all_lots or not selected_lots:
         filtered_data = data
+    else:
+        filtered_data = data[data["Lot"].isin(selected_lots)]
