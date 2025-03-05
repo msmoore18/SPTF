@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # Load data from Excel file in the same GitHub repository
 @st.cache_data
 def load_data():
-    return pd.read_excel("SPTF_Tree_Count.xlsx")  # Ensure 'data.xlsx' is in the same repo
+    return pd.read_excel("SPTF_Tree_Count.xlsx")  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
 
 data = load_data()
 
@@ -40,31 +40,4 @@ with col1:
 
 with col2:
     # Display Image
-    st.image("SPTF.png", width=300, output_format="auto")
-    
-    # Increase image size (3x bigger using markdown styling)
-    st.markdown("""
-    <style>
-        img {
-            transform: scale(1);
-        }
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # Overlay clickable buttons on image
-    st.write("### Click on a Lot to Filter Data")
-    colA, colB, colC = st.columns(3)
-    
-    lot_1 = colA.checkbox("Lot 1", value=True)
-    lot_2 = colB.checkbox("Lot 2", value=True)
-    all_lots = colC.checkbox("All Lots", value=False)
-    
-    selected_lots = []
-    if lot_1:
-        selected_lots.append(1)
-    if lot_2:
-        selected_lots.append(2)
-    if all_lots or not selected_lots:
-        filtered_data = data
-    else:
-        filtered_data = data[data["Lot"].isin(selected_lots)]
+    st.image("SPTF.png", use_container_width=True)
