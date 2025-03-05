@@ -79,8 +79,9 @@ elif page == "Rudy's Page":
     
     # Display Summary
     st.write("### Trees to Cut Down (Quality C)")
+    trees_to_cut = trees_to_cut.drop(columns=['Lot']).dropna(subset=['Count'])
     if not trees_to_cut.empty:
-        st.dataframe(trees_to_cut[['Lot', 'Row', 'Tree Height (ft)', 'Count']])
+        st.dataframe(trees_to_cut[['Row', 'Tree Height (ft)', 'Count']])
     else:
         st.write("No trees need to be cut down.")
     
