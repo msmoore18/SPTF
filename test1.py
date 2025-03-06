@@ -83,7 +83,6 @@ if page == "Tree Inventory":
         st.image("SPTF.png", width=375)
 
 elif page == "Tree Maintenance":
-    st.write("### Tree Summary")
     
     # Filtered summary of trees
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])['Count'].sum().reset_index()
