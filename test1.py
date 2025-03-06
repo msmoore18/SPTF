@@ -42,7 +42,6 @@ if "data" not in st.session_state:
 # Ensure data is available before proceeding
 if "data" in st.session_state:
     data = st.session_state["data"]
-    st.success("Excel file loaded successfully.")
 else:
     st.stop()
 
