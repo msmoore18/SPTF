@@ -49,7 +49,7 @@ if page == "Projected Tree Inventory":
 
     data = st.session_state["data"].copy()
   
-    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
+    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state.get("new_trees", 0))
     st.session_state["new_trees"] = new_trees_per_year
 
 def project_tree_growth(data, years=10):
@@ -77,32 +77,13 @@ def update_with_new_trees(projection, years=10, new_trees_per_year=0):
     new_trees_df = pd.DataFrame(new_trees)
     return pd.concat([projection, new_trees_df], ignore_index=True)
 
-def apply_sales(projection, years=10, sales={}):
-    for year in range(0, years + 1):
-        year_col = 2025 + year
-        if f'Year {year_col}' in projection.columns:
-            projection.loc[projection['Year'] == year_col, 'Count'] -= sales.get(f'Year {year_col}', 0)
-            projection.loc[projection['Year'] == year_col, 'Count'] = projection.loc[projection['Year'] == year_col, 'Count'].clip(lower=0)
-    return projection
-
 def create_summary(projection, years=10):
     summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
     return summary
 
-    
-if "new_trees" not in st.session_state:
-    st.session_state["new_trees"] = 0
-if "sales" not in st.session_state:
-    st.session_state["sales"] = {f'Year {2025 + i}': 0 for i in range(0, 11)}
-
-st.subheader("Specify Sales Numbers")
-for year in range(0, 11):
-    st.session_state["sales"][f'Year {2025 + year}'] = st.number_input(f"Trees to sell in {2025 + year}", min_value=0, step=1, value=st.session_state["sales"][f'Year {2025 + year}'])
-
 if st.button("Calculate"):
     projected_data = project_tree_growth(data)
     projected_data = update_with_new_trees(projected_data, new_trees_per_year=new_trees_per_year)
-    projected_data = apply_sales(projected_data, sales=st.session_state["sales"])
     summary_data = create_summary(projected_data)
     st.session_state["summary_data"] = summary_data
 
