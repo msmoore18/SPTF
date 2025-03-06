@@ -79,7 +79,7 @@ if page == "Tree Inventory":
         height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
         fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count", width=600, height=600)
         fig.update_layout(legend=dict(x=-0.4, y=0.5))
-        fig.update_traces(textinfo='label+percent', insidetextorientation='radial')
+        fig.update_traces(textinfo='percent', insidetextorientation='horizontal')
         st.plotly_chart(fig)
 
     with col2:
