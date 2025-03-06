@@ -78,6 +78,8 @@ elif page == "SPTF Lot Map":
     st.image("SPTF.png", width=300)
     st.markdown('</div>', unsafe_allow_html=True)
 
+  elif page == "Projected Tree Inventory":
+    st.title("Under Construction")
 
 elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
