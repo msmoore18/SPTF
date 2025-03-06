@@ -16,7 +16,7 @@ data = load_data()
 
 # Sidebar for navigation
 st.sidebar.markdown("# Navigation")
-page = st.sidebar.radio("# Go to", ["Tree Inventory", "Tree Maintenance"])
+page = st.sidebar.radio("# Go to", ["Tree Inventory", "Tree Maintenance", "Spruce Point Tree Farm Lot Map"])
 
 # Sidebar for filters
 st.sidebar.header("Filter Options")
@@ -82,11 +82,15 @@ if page == "Tree Inventory":
         fig.update_traces(textinfo='percent', insidetextorientation='horizontal')
         st.plotly_chart(fig)
 
-    with col2:
-        # Display Image
-        st.image("SPTF.png", width=375)
+    
 
 elif page == "Tree Maintenance":
+    st.title("Tree Maintenance Table")
+    st.write("Use this page to download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut), Lot #, and Tree Height you want displayed in the table")
+
+elif page == "SPTF Lot Map":
+    st.title("SPTF Lot Map")
+    st.image("SPTF.png", width=600)
     st.title("Tree Maintenance Table")
     st.write("Use this page to download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut), Lot #, and Tree Height you want displayed in the table")
     
