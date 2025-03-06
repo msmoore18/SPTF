@@ -42,9 +42,14 @@ def load_data(password=None):
         return None  # Return None if password is incorrect or file is not encrypted
 
 # User inputs password
-password = st.sidebar.text_input("Enter Excel Password", type="password")
+password = if data is not None:
+    st.sidebar.success("Loaded file: SPTF_Count.xlsx")
+else:
+    password = st.sidebar.text_input("Enter Excel Password", type="password")
+    enter_button = st.sidebar.button("Enter")
+enter_button = st.sidebar.button("Enter")
 
-if password:
+if password and enter_button:
     data = load_data(password)
     if data is None:
         st.error("Incorrect password or file issue. Please try again.")
