@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import os
+import msoffcrypto
+import io
 import openpyxl
 
 def adjust_heights(df, year):
@@ -10,7 +12,7 @@ def adjust_heights(df, year):
     return df
 
 # Load the dataset
-file_path = "SPTF_Count.xlsx"
+file_path = "SPTF_count.xlsx"
 if not os.path.exists(file_path):
     st.error("SPTF_count.xlsx not found! Please upload the file.")
 else:
@@ -19,7 +21,15 @@ else:
     
     if password:
         try:
-            df = pd.read_excel(file_path, engine='openpyxl', password=password)
+            # Open and decrypt the file
+            decrypted = io.BytesIO()
+            with open(file_path, "rb") as f:
+                office_file = msoffcrypto.OfficeFile(f)
+                office_file.load_key(password=password)
+                office_file.decrypt(decrypted)
+            
+            # Read decrypted data into DataFrame
+            df = pd.read_excel(decrypted, engine='openpyxl')
             st.write("### Original Data:")
             st.dataframe(df)
             
