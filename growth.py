@@ -65,34 +65,6 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):
         
         year_data["Tree Height (ft)"] = year_data["Tree Height (ft)"].apply(lambda x: grow_tree(x, year))
         
-        # Add new trees for each year
-        new_trees = pd.DataFrame({
-            "Tree Height (ft)": [grow_tree(0.5, yr) for yr in range(year + 1)],
-            "Year": [2025 + year] * (year + 1),
-            "Lot": ["N/A"] * (year + 1),
-            "Row": ["N/A"] * (year + 1),
-            "Quality": ["N/A"] * (year + 1),
-            "Count": [new_trees_per_year] * (year + 1)
-        })
-        
-        year_data = pd.concat([year_data, new_trees], ignore_index=True)
-        projections.append(year_data)
-    return pd.concat(projections)
-
-def create_summary(projection, years=10):
-    summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
-    return summary
-
-if page == "Projected Tree Inventory":
-    st.title("Projected Tree Inventory")
-    
-    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
-    st.session_state["new_trees"] = new_trees_per_year
-    
-    if st.button("Calculate"):
-        projected_data = project_tree_growth(data, years=10, new_trees_per_year=st.session_state["new_trees"])
-        summary_data = create_summary(projected_data)
-        st.session_state["summary_data"] = summary_data
-    
-    if "summary_data" in st.session_state:
-        st.dataframe(st.session_state["summary_data"])
+        # Ensure new trees continue growing after reaching 2ft
+        new_trees = []
+        for yr i
