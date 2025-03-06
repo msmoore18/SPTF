@@ -49,13 +49,13 @@ page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree I
 if "new_trees" not in st.session_state:
     st.session_state["new_trees"] = 0
 
-def project_tree_growth(data, years=5, new_trees_per_year=0):
+def project_tree_growth(data, years=10, new_trees_per_year=0):
     projections = []
     for year in range(0, years + 1):
         year_data = data.copy()
         year_data["Year"] = 2025 + year
         year_data["Tree Height (ft)"] = year_data["Tree Height (ft)"].apply(
-            lambda x: x + (0.5 * min(year, (2 - x) * 2) if x < 2 else (year - max(0, (2 - x) * 2)))
+            lambda x: x + (0.5 * min(year, (2 - x) * 2) if x < 2 else (1 * (year - max(0, (2 - x) * 2))))
         )
         
         # Add new trees for each year
