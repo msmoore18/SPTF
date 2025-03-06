@@ -45,8 +45,8 @@ def load_data(password=None):
 if 'data' in locals() and data is not None:
     st.sidebar.success("Loaded file: SPTF_Count.xlsx")
 else:
-    password = st.sidebar.text_input("Enter Excel Password", type="password")
-    enter_button = st.sidebar.button("Enter")
+    password = st.sidebar.text_input("Enter Excel Password", type="password", key="password_input")
+    enter_button = st.sidebar.button("Enter", key="enter_button")
     
     if password and enter_button:
         data = load_data(password)
@@ -64,36 +64,6 @@ else:
     else:
         st.warning("Please enter a password to load the Excel file.")
         st.stop()
-password = st.sidebar.text_input("Enter Excel Password", type="password")
-enter_button = st.sidebar.button("Enter")
-
-if password and enter_button:
-    data = load_data(password)
-    if data is None:
-        st.error("Incorrect password or file issue. Please try again.")
-        st.stop()
-    else:
-        st.sidebar.success("Loaded file: SPTF_Count.xlsx")
-
-    if password and enter_button:
-        data = load_data(password)
-        if data is None:
-            st.error("Incorrect password or file issue. Please try again.")
-            st.stop()
-    else:
-        st.warning("Please enter a password to load the Excel file.")
-        st.stop()
-    st.sidebar.success("Loaded file: SPTF_Count.xlsx")
-else:
-    password = st.sidebar.text_input("Enter Excel Password", type="password")
-    enter_button = st.sidebar.button("Enter")
-
-    data = load_data(password)
-    if data is None:
-        st.error("Incorrect password or file issue. Please try again.")
-        st.stop()
-
-
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
