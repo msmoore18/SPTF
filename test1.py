@@ -73,7 +73,7 @@ with tab1:
         # Display Image
         st.image("SPTF.png", width=375)
 
-elwith tab2:
+with tab2:
     st.write("### Tree Summary")
     
     # Filtered summary of trees
