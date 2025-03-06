@@ -90,25 +90,25 @@ def create_summary(projection, years=10):
     return summary
 
     
-  if "new_trees" not in st.session_state:
-      st.session_state["new_trees"] = 0
-  if "sales" not in st.session_state:
-      st.session_state["sales"] = {f'Year {2025 + i}': 0 for i in range(0, 11)}
-  
-  st.subheader("Specify Sales Numbers")
-  for year in range(0, 11):
-      st.session_state["sales"][f'Year {2025 + year}'] = st.number_input(f"Trees to sell in {2025 + year}", min_value=0, step=1, value=st.session_state["sales"][f'Year {2025 + year}'])
-  
-  if st.button("Calculate"):
-      projected_data = project_tree_growth(data)
-      projected_data = update_with_new_trees(projected_data, new_trees_per_year=new_trees_per_year)
-      projected_data = apply_sales(projected_data, sales=st.session_state["sales"])
-      summary_data = create_summary(projected_data)
-      st.session_state["summary_data"] = summary_data
-  
-  if "summary_data" in st.session_state:
-      st.dataframe(st.session_state["summary_data"])
-  
-  if st.button("Clear Data"):
-      st.session_state.clear()
-      st.rerun()
+if "new_trees" not in st.session_state:
+    st.session_state["new_trees"] = 0
+if "sales" not in st.session_state:
+    st.session_state["sales"] = {f'Year {2025 + i}': 0 for i in range(0, 11)}
+
+st.subheader("Specify Sales Numbers")
+for year in range(0, 11):
+    st.session_state["sales"][f'Year {2025 + year}'] = st.number_input(f"Trees to sell in {2025 + year}", min_value=0, step=1, value=st.session_state["sales"][f'Year {2025 + year}'])
+
+if st.button("Calculate"):
+    projected_data = project_tree_growth(data)
+    projected_data = update_with_new_trees(projected_data, new_trees_per_year=new_trees_per_year)
+    projected_data = apply_sales(projected_data, sales=st.session_state["sales"])
+    summary_data = create_summary(projected_data)
+    st.session_state["summary_data"] = summary_data
+
+if "summary_data" in st.session_state:
+    st.dataframe(st.session_state["summary_data"])
+
+if st.button("Clear Data"):
+    st.session_state.clear()
+    st.rerun()
