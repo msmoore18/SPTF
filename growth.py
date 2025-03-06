@@ -27,8 +27,10 @@ def load_data(password):
             office_file.load_key(password)
             office_file.decrypt(decrypted)
             return pd.read_excel(decrypted, engine='openpyxl')
-    except Exception:
-        return None
+    except msoffcrypto.exceptions.DecryptionError:
+        return "Incorrect Password"
+    except Exception as e:
+        return f"Error: {e}"
 
 # User enters password
 if "data" not in st.session_state:
@@ -38,15 +40,17 @@ if "data" not in st.session_state:
         password = st.session_state.password_input
         if password:
             data = load_data(password)
-            if data is None:
-                st.session_state["password_error"] = True
+            if data == "Incorrect Password":
+                st.session_state["password_error"] = "Incorrect password. Please try again."
+            elif isinstance(data, str) and data.startswith("Error:"):
+                st.session_state["password_error"] = f"File issue: {data}"
             else:
                 st.session_state["data"] = data
-                st.session_state["password_error"] = False
+                st.session_state["password_error"] = None
 
     # Initialize the error state
     if "password_error" not in st.session_state:
-        st.session_state["password_error"] = False
+        st.session_state["password_error"] = None
 
     st.text_input(
         "Excel File Password:",
@@ -60,7 +64,7 @@ if "data" not in st.session_state:
 
     # Handle errors or success after callback/button press
     if st.session_state.get("password_error"):
-        st.error("Incorrect password or file issue. Please try again.")
+        st.error(st.session_state["password_error"])
     elif "data" in st.session_state:
         st.rerun()
 
