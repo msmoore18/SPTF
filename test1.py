@@ -98,10 +98,7 @@ else:
     lots = [selected_lot]
 
 # Filter data based on selections
-size_bins = [0, 5, 10, 15, 20, float('inf')]
-size_labels = ["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"]
-data["Tree Size"] = pd.cut(data["Tree Height (ft)"], bins=size_bins, labels=size_labels)
-tree_size_summary = data.groupby("Tree Size")["Count"].sum().reset_index()
+tree_size_summary = data.groupby("Tree Height (ft)")["Count"].sum().reset_index()
 
 filtered_data = data[
     (data["Lot"].isin(lots)) &
