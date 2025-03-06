@@ -7,14 +7,35 @@ st.set_page_config(layout="wide")
 
 # Load data
 @st.cache_data
-def load_data():
-    return pd.read_excel("SPTF_Count.xlsx")
+import msoffcrypto
+import io
 
-data = load_data()
+def load_data(password=None):
+        file_path = "SPTF_Count.xlsx"
+    with open(file_path, "rb") as file:
+        decrypted = io.BytesIO()
+        office_file = msoffcrypto.OfficeFile(file)
+        try:
+            office_file.load_key(password)
+            office_file.decrypt(decrypted)
+            return pd.read_excel(decrypted)
+        except Exception:
+            return None
+
+password = st.sidebar.text_input("Enter Excel Password", type="password")
+
+if password:
+    data = load_data(password)
+    if data is None:
+        st.error("Incorrect password or file issue. Please try again.")
+        st.stop()
+else:
+    st.warning("Please enter a password to load the Excel file.")
+    st.stop()
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["SPTF Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
+page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
 # Sidebar filters
 st.sidebar.header("Filter Options")
@@ -72,7 +93,7 @@ if page == "Tree Inventory":
         fig.update_layout(legend=dict(x=-0.4, y=0.5))
         st.plotly_chart(fig)
 
-elif page == "SPTF Lot Map":
+elif page == "Lot Map":
     st.title("Lot Map")
     st.image("SPTF.png", width=300)
 
