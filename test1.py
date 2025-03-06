@@ -108,22 +108,22 @@ if page == "Tree Inventory":
     st.title("2025 Inventory for Spruce Point Tree Farm")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
     
-        # Tree Count vs Tree Height
-        height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
-        fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', 
-                     labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'})
-        fig.update_layout(xaxis=dict(tickmode='array', tickvals=height_group.index))
-        st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
-        st.plotly_chart(fig)
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Tree Count vs Tree Height
+    height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
+    fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', 
+                 labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'})
+    fig.update_layout(xaxis=dict(tickmode='array', tickvals=height_group.index))
+    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
+    st.plotly_chart(fig)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-        # Pie Chart
-        height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], 
-                             labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
-        height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
-        fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
-        fig.update_layout(legend=dict(x=.1, y=0.5))
-        st.plotly_chart(fig)
+    # Pie Chart
+    height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], 
+                         labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
+    height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
+    fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
+    fig.update_layout(legend=dict(x=.1, y=0.5))
+    st.plotly_chart(fig)
 
 elif page == "Lot Map":
     st.title("Lot Map")
