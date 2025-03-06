@@ -73,7 +73,7 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):
 
 def create_summary(projection, years=10):
     projection["Tree Height (ft)"] = projection["Tree Height (ft)"].apply(lambda x: int(x))  # Bin tree heights to whole numbers
-    summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
+    summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().reset_index()
     return summary
 
 if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"]):
@@ -92,3 +92,9 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
     
     if "summary_data" in st.session_state:
         st.dataframe(st.session_state["summary_data"])
+        
+        # Create a line plot
+        fig = px.line(st.session_state["summary_data"], x="Year", y="Count", color="Tree Height (ft)", 
+                      labels={"Year": "Year", "Count": "Tree Count", "Tree Height (ft)": "Tree Height (ft)"},
+                      title="Projected Tree Growth Over Time")
+        st.plotly_chart(fig)
