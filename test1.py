@@ -85,6 +85,7 @@ if page == "Tree Inventory":
         st.image("SPTF.png", width=375)
 
 elif page == "Tree Maintenance":
+    st.title("Tree Maintenance Table")
     st.write("Use this page to download a printable table to provide to Rudy to indicate which trees he should either prune (B quality trees) or which trees he should cut (C quality trees).")
     
     # Filtered summary of trees
