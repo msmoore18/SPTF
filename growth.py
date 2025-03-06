@@ -49,16 +49,18 @@ page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree I
 if "new_trees" not in st.session_state:
     st.session_state["new_trees"] = 0
 
-def project_tree_growth(data, years=10, new_trees_per_year=0):
+def project_tree_growth(data, years=5, new_trees_per_year=0):
     projections = []
     for year in range(0, years + 1):
         year_data = data.copy()
         year_data["Year"] = 2025 + year
-        year_data["Tree Height (ft)"] = year_data["Tree Height (ft)"].apply(lambda x: x + min(2 - x, 0.5 * year) if x < 2 else x + max(0, year - (2 - x) * 2))
+        year_data["Tree Height (ft)"] = year_data["Tree Height (ft)"].apply(
+            lambda x: x + (0.5 * min(year, (2 - x) * 2) if x < 2 else (year - max(0, (2 - x) * 2)))
+        )
         
         # Add new trees for each year
         new_trees = pd.DataFrame({
-            "Tree Height (ft)": [(0.5 * yr if yr < 4 else yr - 2) for yr in range(year + 1)],
+            "Tree Height (ft)": [(0.5 * min(yr, 4) + max(0, yr - 4)) for yr in range(year + 1)],
             "Year": [2025 + year] * (year + 1),
             "Lot": ["N/A"] * (year + 1),
             "Row": ["N/A"] * (year + 1),
@@ -87,7 +89,3 @@ if page == "Projected Tree Inventory":
     
     if "summary_data" in st.session_state:
         st.dataframe(st.session_state["summary_data"])
-    
-    if st.button("Clear Data"):
-        st.session_state.clear()
-        st.rerun()
