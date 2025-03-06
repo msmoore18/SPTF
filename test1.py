@@ -83,7 +83,7 @@ filtered_data = data[
 
 if page == "Tree Inventory":
     st.title("2025 Inventory for Spruce Point Tree Farm")
-    st.write(f"### Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}")
+    st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
     
     col1, col2 = st.columns([4, 2])
     with col1:
