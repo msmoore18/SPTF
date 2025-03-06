@@ -124,4 +124,3 @@ with col_right:
     st.markdown("### Lot Map")
     st.image("SPTF.png", width=300)
 
-
