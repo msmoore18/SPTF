@@ -1,4 +1,6 @@
 import streamlit as st
+import msoffcrypto
+import io
 import pandas as pd
 import plotly.express as px
 import msoffcrypto
@@ -6,6 +8,42 @@ import io
 
 # Streamlit page configuration
 st.set_page_config(layout="wide")
+
+# Load password-protected Excel file
+def load_data(password):
+    file_path = "SPTF_Count.xlsx"
+    try:
+        with open(file_path, "rb") as file:
+            decrypted = io.BytesIO()
+            office_file = msoffcrypto.OfficeFile(file)
+
+            if not office_file.is_encrypted():
+                return pd.read_excel(file_path)
+
+            office_file.load_key(password)
+            office_file.decrypt(decrypted)
+            return pd.read_excel(decrypted)
+    except Exception as e:
+        return None
+
+# User enters password
+st.title("Enter Password to Access Data")
+password = st.text_input("Excel File Password:", type="password")
+enter_button = st.button("Enter")
+
+if "data" not in st.session_state:
+    if password and enter_button:
+        data = load_data(password)
+        if data is None:
+            st.error("Incorrect password or file issue. Please try again.")
+            st.stop()
+        else:
+            st.session_state["data"] = data
+            st.rerun()
+
+if "data" in st.session_state:
+    data = st.session_state["data"]
+    st.success("Excel file loaded successfully.")
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
