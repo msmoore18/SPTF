@@ -14,7 +14,7 @@ data = load_data()
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Tree Inventory", "SPTF Lot Map", "Tree Maintenance"])
+page = st.sidebar.radio("Go to", ["SPTF Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
 # Sidebar filters
 st.sidebar.header("Filter Options")
