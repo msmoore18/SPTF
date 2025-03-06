@@ -91,18 +91,4 @@ elif page == "Rudy's Page":
         st.dataframe(c_trees)
     else:
         st.write("No C quality trees found.")
-    
-    # Layout: Main content on left, image on right
-    col1, col2 = st.columns([4, 2])
-
-    with col1:
-        # Bar Chart: Tree Count vs Row (Stacked by Quality)
-        st.write(f"### Lot {lots} Tree Count")
-        row_group = filtered_data.groupby(["Row", "Quality"])["Count"].sum().reset_index()
-        fig = px.bar(row_group, x='Row', y='Count', color='Quality', barmode='stack', labels={'Row': 'Row', 'Count': 'Tree Count', 'Quality': 'Quality'}, hover_data={'Row': True, 'Count': True, 'Quality': True})
-        fig.update_layout(xaxis=dict(tickmode='linear'))
-        st.plotly_chart(fig)
-    
-    with col2:
-        # Display Image
-        st.image("SPTF.png", width=375)
+  
