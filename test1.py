@@ -158,7 +158,7 @@ elif page == "Lot Map":
 
 elif page == "Projected Tree Inventory":
     st.title("Current Tree Inventory")
-    st.write("This table summarizes the number of trees based on their height categories.")
+    st.write("This table summarizes the total number of planted trees based on their height categories. Not that this table does not changed based on you selections to the left.")
     st.dataframe(tree_size_summary, hide_index=True)
 
 elif page == "Tree Maintenance":
