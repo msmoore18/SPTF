@@ -78,7 +78,7 @@ if page == "Tree Inventory":
         height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
         height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
         fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count", width=600, height=600)
-        fig.update_layout(legend=dict(x=-0.2, y=0.5))
+        fig.update_layout(legend=dict(x=-0.4, y=0.5))
         fig.update_traces(textinfo='label+percent', insidetextorientation='radial')
         st.plotly_chart(fig)
 
