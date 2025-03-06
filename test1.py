@@ -11,6 +11,25 @@ st.set_page_config(layout="wide")
 @st.cache_data
 def load_data(password=None):
     file_path = "SPTF_Count.xlsx"
+    try:
+        with open(file_path, "rb") as file:
+            decrypted = io.BytesIO()
+            office_file = msoffcrypto.OfficeFile(file)
+            
+            # Check if the file is actually encrypted
+            if not office_file.is_encrypted():
+                return pd.read_excel(file_path)  # Load normally if not encrypted
+            
+            office_file.load_key(password)  # Try loading password
+            office_file.decrypt(decrypted)
+            return pd.read_excel(decrypted)  # Read decrypted Excel file
+    except msoffcrypto.exceptions.DecryptionError:
+        st.error("Incorrect password. Please try again.")
+        return None
+    except Exception as e:
+        st.error(f"Error loading file: {str(e)}")
+        return None
+    file_path = "SPTF_Count.xlsx"
 
     try:
         with open(file_path, "rb") as file:
@@ -126,3 +145,5 @@ elif page == "Tree Maintenance":
     st.markdown('</div>', unsafe_allow_html=True)
 
   
+
+
