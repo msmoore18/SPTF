@@ -78,7 +78,7 @@ elif page == "Rudy's Page":
     
     # B Trees Table: To Be Pruned
     st.write("### B Trees: To Be Pruned")
-    b_trees = data[data['Quality'] == 'B'][['Lot', 'Row', 'Tree Height (ft)', 'Count']]
+    b_trees = data[data['Quality'] == 'B'][['Lot', 'Row', 'Tree Height (ft)', 'Count']].sort_values(by=['Lot', 'Row'])
     if not b_trees.empty:
         st.dataframe(b_trees, hide_index=True)
     else:
@@ -86,7 +86,7 @@ elif page == "Rudy's Page":
     
     # C Trees Table: To Be Cut
     st.write("### C Trees: To Be Cut")
-    c_trees = data[data['Quality'] == 'C'][['Lot', 'Row', 'Tree Height (ft)']]
+    c_trees = data[data['Quality'] == 'C'][['Lot', 'Row', 'Tree Height (ft)']].sort_values(by=['Lot', 'Row'])
     if not c_trees.empty:
         st.dataframe(c_trees, hide_index=True)
     else:
