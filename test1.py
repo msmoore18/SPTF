@@ -49,8 +49,9 @@ filtered_data = data[
 ]
 
 if page == "Tree Inventory":
-    st.write(f"### Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}")
     st.title("2025 Inventory for Spruce Point Tree Farm")
+  
+    st.write(f"### Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}")
     
     col1, col2 = st.columns([4, 2])
     with col1:
