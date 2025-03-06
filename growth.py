@@ -88,11 +88,11 @@ if "data" in st.session_state:
     
     # Convert summary to DataFrame with proper structure
     all_heights = sorted(set(h for year in summary.values() for h in year.keys()))
-    summary_df = pd.DataFrame(0, index=all_heights, columns=range(2026, 2031))
+    summary_df = pd.DataFrame(0, index=pd.Index(all_heights, dtype=int), columns=range(2026, 2031), dtype=int)
     
     for year, height_data in summary.items():
         for height, count in height_data.items():
-            summary_df.at[height, year] = count
+            summary_df.at[int(height), year] = count
     
     st.write("### Initial Tree Count Summary")
     st.dataframe(summary_df)
@@ -101,7 +101,11 @@ if "data" in st.session_state:
     st.write("## Adjustments")
     for year in range(2026, 2031):
         buy_trees = st.number_input(f"Number of 1ft trees to buy in {year}", min_value=0, value=0, step=1)
-        summary_df.at[1, year] += buy_trees
+        if 1 in summary_df.index:
+            summary_df.at[1, year] += buy_trees
+        else:
+            summary_df.loc[1] = [0] * len(summary_df.columns)
+            summary_df.at[1, year] = buy_trees
     
     # User input for selling trees
     for year in range(2026, 2031):
