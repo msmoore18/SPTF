@@ -72,10 +72,9 @@ if page == "Tree Inventory":
         fig.update_layout(legend=dict(x=-0.4, y=0.5))
         st.plotly_chart(fig)
 
-elif page == "Lot Map":
+elif page == "SPTF Lot Map":
     st.title("Lot Map")
     st.image("SPTF.png", width=300)
-    st.title("Lot Map")
 
 elif page == "Projected Tree Inventory":
     st.title("Under Construction")
