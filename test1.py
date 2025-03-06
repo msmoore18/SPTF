@@ -125,15 +125,16 @@ if page == "Tree Inventory":
     fig.update_layout(legend=dict(x=.1, y=0.5))
     st.plotly_chart(fig)
 
-    # Additional Plot: Tree Count vs Lot
-    lot_group = filtered_data.groupby("Lot")["Count"].sum().reset_index()
-    fig_lot = px.bar(lot_group, x='Lot', y='Count',
-                     labels={'Lot': 'Lot', 'Count': 'Tree Count'})
-    fig_lot.update_layout(xaxis=dict(type='category'))
-
-    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
-    st.plotly_chart(fig_lot)
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Additional Plot: Tree Count vs Lot (only appears if selected_lot == 'All')
+    if selected_lot == 'All':
+        lot_group = filtered_data.groupby("Lot")["Count"].sum().reset_index()
+        fig_lot = px.bar(lot_group, x='Lot', y='Count',
+                         labels={'Lot': 'Lot', 'Count': 'Tree Count'})
+        fig_lot.update_layout(xaxis=dict(type='category'))
+    
+        st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
+        st.plotly_chart(fig_lot)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 elif page == "Lot Map":
     st.title("Lot Map")
