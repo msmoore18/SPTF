@@ -11,7 +11,12 @@ st.set_page_config(layout="wide")
 def load_data():
     return pd.read_excel("SPTF_Count.xlsx")  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
 
-data = load_data()
+uploaded_file = st.sidebar.file_uploader("Upload your Excel file", type=["xlsx"])
+if uploaded_file:
+    data = pd.read_excel(uploaded_file)
+else:
+    st.warning("Please upload an Excel file to proceed.")
+    st.stop()
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
