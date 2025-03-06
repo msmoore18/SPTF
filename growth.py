@@ -85,9 +85,11 @@ if "data" in st.session_state:
         # Count tree heights for summary
         height_counts = adjusted_df.groupby("Tree Height (ft)")["Count"].sum().reset_index()
         summary[year] = dict(zip(height_counts["Tree Height (ft)"], height_counts["Count"]))
-
+    
     # Convert summary to DataFrame
-    summary_df = pd.DataFrame(summary).fillna(0).astype(int)
+    summary_df = pd.DataFrame.from_dict(summary, orient='index').fillna(0).astype(int)
+    summary_df = summary_df.T  # Transpose to match expected format
+    
     st.write("### Initial Tree Count Summary")
     st.dataframe(summary_df)
 
@@ -95,7 +97,10 @@ if "data" in st.session_state:
     st.write("## Adjustments")
     for year in range(2026, 2031):
         buy_trees = st.number_input(f"Number of 1ft trees to buy in {year}", min_value=0, value=0, step=1)
-        summary_df.loc[1, year] = summary_df.get(year, {}).get(1, 0) + buy_trees
+        if 1 in summary_df.index:
+            summary_df.loc[1, year] += buy_trees
+        else:
+            summary_df.loc[1, year] = buy_trees
     
     # User input for selling trees
     for year in range(2026, 2031):
