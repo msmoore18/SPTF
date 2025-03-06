@@ -87,7 +87,7 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
     st.session_state["new_trees"] = new_trees_per_year
     
     if st.button("Calculate"):
-        projected_data = project_tree_growth(data, years=10, new_trees_per_year=st.session_state["new_trees"])
+        projected_data = project_tree_growth(data, years=20, new_trees_per_year=st.session_state["new_trees"])
         summary_data, summary_melted = create_summary(projected_data)
         st.session_state["summary_data"] = summary_data
         st.session_state["summary_melted"] = summary_melted
