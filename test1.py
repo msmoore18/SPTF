@@ -81,7 +81,7 @@ elif page == "SPTF Lot Map":
 
 elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
-    st.write("Use this page to download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut), Lot #, and Tree Height you want displayed in the table")
+    st.write("This page lets you customize and download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut), Lot #, and Tree Height you want displayed in the table")
     
     # Filtered summary of trees
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])['Count'].sum().reset_index()
