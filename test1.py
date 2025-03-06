@@ -12,6 +12,15 @@ def load_data():
 
 data = load_data()
 
+# Create layout with a right sidebar effect
+col_main, col_right = st.columns([4, 1])
+
+with col_right:
+    st.markdown("### Right Sidebar")
+    st.write("Additional options or information can go here.")
+    # Example additional filter
+    extra_filter = st.selectbox("Example Filter", ["Option 1", "Option 2", "Option 3"])
+
 # Sidebar navigation
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["SPTF Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
