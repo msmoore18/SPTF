@@ -129,7 +129,7 @@ if page == "Tree Inventory":
 
 elif page == "Lot Map":
     st.title("Lot Map")
-    st.image("SPTF.png", width=300)
+    st.image("map_larger.png", width=300)
 
 elif page == "Projected Tree Inventory":
     st.title("Under Construction")
