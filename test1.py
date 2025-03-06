@@ -16,13 +16,6 @@ def load_data(password):
             office_file = msoffcrypto.OfficeFile(file)
             office_file.load_key(password=password)
             office_file.decrypt(decrypted)
-
-            # Load main data from the first sheet by default
-            data = pd.read_excel(decrypted, sheet_name=0)
-
-            # Load sidebar info from the second sheet
-            info_df = pd.read_excel(decrypted, sheet_name=1)
-            
             return data, info_df
     except Exception as e:
         return None, None
@@ -68,17 +61,6 @@ if "data" in st.session_state:
     data = st.session_state["data"]
 else:
     st.stop()
-
-# Display sidebar information once data is loaded
-info_df = pd.read_excel("SPTF_Count.xlsx", sheet_name=1)  # read the second tab directly
-info_dict = pd.Series(info_df.iloc[:,1].values, index=info_df.iloc[:,0]).to_dict()
-
-with st.sidebar:
-    st.markdown("## 📌 File Information")
-    st.markdown(f"**File Name:** {info_dict.get('File Name', 'N/A')}")
-    st.markdown(f"**Version:** {info_dict.get('Version', 'N/A')}")
-    st.markdown(f"**Date Updated:** {info_dict.get('Date Updated', 'N/A')}")
-    st.markdown(f"**Updated By:** {info_dict.get('Updated By', 'N/A')}")
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
