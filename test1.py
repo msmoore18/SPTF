@@ -42,7 +42,21 @@ def load_data(password=None):
         return None  # Return None if password is incorrect or file is not encrypted
 
 # User inputs password
-if 'data' in locals() and data is not None:
+if 'data' not in st.session_state:
+    password = st.sidebar.text_input("Enter Excel Password", type="password", key="password_input")
+    enter_button = st.sidebar.button("Enter", key="enter_button")
+    
+    if password and enter_button:
+        data = load_data(password)
+        if data is None:
+            st.error("Incorrect password or file issue. Please try again.")
+            st.stop()
+        else:
+            st.session_state['data'] = data  # Store data in session state
+            st.sidebar.success("Loaded file: SPTF_Count.xlsx")
+            st.rerun()
+else:
+    data = st.session_state['data']
     st.sidebar.success("Loaded file: SPTF_Count.xlsx")
     password = None  # Clear password input
     enter_button = None
