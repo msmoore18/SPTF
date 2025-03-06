@@ -56,14 +56,14 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):
         year_data["Year"] = 2025 + year
         year_data["Tree Height (ft)"] = year_data["Tree Height (ft)"].apply(lambda x: x + min(2 - x, 0.5 * year) if x < 2 else x + max(0, year - (2 - x) * 2))
         
-        # Add new trees for this year
+        # Add new trees for each year
         new_trees = pd.DataFrame({
-            "Tree Height (ft)": [min(2, 0.5 * year) if year < 4 else (year - 2)],
-            "Year": [2025 + year],
-            "Lot": ["N/A"],
-            "Row": ["N/A"],
-            "Quality": ["N/A"],
-            "Count": [new_trees_per_year]
+            "Tree Height (ft)": [(0.5 * yr if yr < 4 else yr - 2) for yr in range(year + 1)],
+            "Year": [2025 + year] * (year + 1),
+            "Lot": ["N/A"] * (year + 1),
+            "Row": ["N/A"] * (year + 1),
+            "Quality": ["N/A"] * (year + 1),
+            "Count": [new_trees_per_year] * (year + 1)
         })
         
         year_data = pd.concat([year_data, new_trees], ignore_index=True)
