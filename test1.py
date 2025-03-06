@@ -21,8 +21,15 @@ def load_data(password=None):
         return pd.read_excel(decrypted)  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
 
 password = st.sidebar.text_input("Enter Excel Password", type="password")
-try:
-    data = load_data(password)
+if password:
+    try:
+        data = load_data(password)
+    except Exception as e:
+        st.error("Incorrect password or file issue. Please try again.")
+        st.stop()
+else:
+    st.warning("Please enter a password to load the Excel file.")
+    st.stop()
 except Exception as e:
     st.error("Incorrect password or file issue. Please try again.")
     st.stop()
