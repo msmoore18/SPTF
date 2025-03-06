@@ -71,8 +71,8 @@ if page == "Tree Inventory":
         st.plotly_chart(fig)
 
 elif page == "SPTF Lot Map":
-    st.title("SPTF Lot Map Table")
-    st.write("Use this page to download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut), Lot #, and Tree Height you want displayed in the table")
+    st.image("SPTF.png", width=600)
+
 
 elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
