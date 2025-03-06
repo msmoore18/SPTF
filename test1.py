@@ -1,27 +1,28 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import msoffcrypto
+import io
 
 # Streamlit page configuration
 st.set_page_config(layout="wide")
 
-# Load data
+# Load data from a password-protected Excel file
 @st.cache_data
-import msoffcrypto
-import io
-
 def load_data(password=None):
-        file_path = "SPTF_Count.xlsx"
-    with open(file_path, "rb") as file:
-        decrypted = io.BytesIO()
-        office_file = msoffcrypto.OfficeFile(file)
-        try:
-            office_file.load_key(password)
-            office_file.decrypt(decrypted)
-            return pd.read_excel(decrypted)
-        except Exception:
-            return None
+    file_path = "SPTF_Count.xlsx"
 
+    try:
+        with open(file_path, "rb") as file:
+            decrypted = io.BytesIO()
+            office_file = msoffcrypto.OfficeFile(file)
+            office_file.load_key(password)  # Load the provided password
+            office_file.decrypt(decrypted)
+            return pd.read_excel(decrypted)  # Read decrypted Excel file
+    except Exception:
+        return None  # Return None if password is incorrect or file is not encrypted
+
+# User inputs password
 password = st.sidebar.text_input("Enter Excel Password", type="password")
 
 if password:
@@ -32,6 +33,7 @@ if password:
 else:
     st.warning("Please enter a password to load the Excel file.")
     st.stop()
+
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
@@ -124,5 +126,3 @@ elif page == "Tree Maintenance":
     st.markdown('</div>', unsafe_allow_html=True)
 
   
-
-
