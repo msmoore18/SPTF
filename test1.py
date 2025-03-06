@@ -30,9 +30,7 @@ if password:
 else:
     st.warning("Please enter a password to load the Excel file.")
     st.stop()
-except Exception as e:
-    st.error("Incorrect password or file issue. Please try again.")
-    st.stop()
+
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
