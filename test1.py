@@ -50,9 +50,9 @@ if 'data' in locals() and data is not None:
 else:
     if 'data' not in locals() or data is None:
         if 'data' not in locals() or data is None:
-        password = st.sidebar.text_input("Enter Excel Password", type="password", key="password_input")
+            password = st.sidebar.text_input("Enter Excel Password", type="password", key="password_input")
         if 'data' not in locals() or data is None:
-        enter_button = st.sidebar.button("Enter", key="enter_button")
+            enter_button = st.sidebar.button("Enter", key="enter_button")
     
     if password and enter_button:
         data = load_data(password)
