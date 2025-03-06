@@ -12,15 +12,6 @@ def load_data():
 
 data = load_data()
 
-# Create layout with a right sidebar effect
-col_main, col_right = st.columns([4, 1])
-
-with col_right:
-    st.markdown("### Lot Map")
-    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
-    st.image("SPTF.png", width=300)
-    st.markdown('</div>', unsafe_allow_html=True)
-
 # Sidebar navigation
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["SPTF Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
@@ -103,4 +94,14 @@ elif page == "Tree Maintenance":
     )
     st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
     st.dataframe(tree_summary, hide_index=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+  
+# Create layout with a right sidebar effect
+col_main, col_right = st.columns([4, 1])
+
+with col_right:
+    st.markdown("### Lot Map")
+    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
+    st.image("SPTF.png", width=300)
     st.markdown('</div>', unsafe_allow_html=True)
