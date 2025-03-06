@@ -71,7 +71,9 @@ if page == "Tree Inventory":
         fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', hover_data={'Tree Height (ft)': True, 'Count': True}, category_orders={'Tree Height (ft)': sorted(data['Tree Height (ft)'].unique())}, labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'})
         fig.update_layout(xaxis=dict(tickmode='array', tickvals=height_group.index))
         st.markdown('<div style="border: 2px solid black; padding: 10px;">', unsafe_allow_html=True)
-        st.plotly_chart(fig)
+        st.markdown('<div style="border: 2px solid black; padding: 10px;">', unsafe_allow_html=True)
+        st.plotly_chart(fig, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
         st.markdown("<br><br>", unsafe_allow_html=True)
 
