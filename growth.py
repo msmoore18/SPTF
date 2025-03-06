@@ -101,11 +101,9 @@ if "data" in st.session_state:
     st.write("## Adjustments")
     for year in range(2026, 2031):
         buy_trees = st.number_input(f"Number of 1ft trees to buy in {year}", min_value=0, value=0, step=1)
-        if 1 in summary_df.index:
-            summary_df.at[1, year] += buy_trees
-        else:
-            summary_df.loc[1] = [0] * len(summary_df.columns)
-            summary_df.at[1, year] = buy_trees
+        if 1 not in summary_df.index:
+            summary_df.loc[1] = [0] * len(summary_df.columns)  # Initialize if missing
+        summary_df.at[1, year] += buy_trees
     
     # User input for selling trees
     for year in range(2026, 2031):
