@@ -72,6 +72,7 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):
     return pd.concat(projections)
 
 def create_summary(projection, years=10):
+    projection["Tree Height (ft)"] = projection["Tree Height (ft)"].apply(lambda x: int(x))  # Bin tree heights to whole numbers
     summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
     return summary
 
