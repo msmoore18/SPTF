@@ -27,29 +27,39 @@ def load_data(password):
 # User enters password
 if "data" not in st.session_state:
     st.title("Enter Password to Access Data")
-    
+
     def submit_password():
-        if st.session_state.password_input:
-            data = load_data(st.session_state.password_input)
+        password = st.session_state.password_input
+        if password:
+            data = load_data(password)
             if data is None:
-                st.error("Incorrect password or file issue. Please try again.")
+                st.session_state["password_error"] = True
             else:
                 st.session_state["data"] = data
-                st.rerun()
+                st.session_state["password_error"] = False
 
-    # Text input with on_change callback
+    # Initialize the error state
+    if "password_error" not in st.session_state:
+        st.session_state["password_error"] = False
+
     st.text_input(
-        "Excel File Password:", 
-        type="password", 
+        "Excel File Password:",
+        type="password",
         key="password_input",
         on_change=submit_password
     )
 
-    # Button to submit password manually
     if st.button("Enter"):
         submit_password()
 
+    # Handle errors or success after callback/button press
+    if st.session_state.get("password_error"):
+        st.error("Incorrect password or file issue. Please try again.")
+    elif "data" in st.session_state:
+        st.rerun()  # Now outside the callback, safe to call
+
     st.stop()
+
 
 
 # Ensure data is available before proceeding
