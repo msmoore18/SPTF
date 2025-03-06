@@ -76,7 +76,19 @@ def create_summary(projection, years=10):
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-if page == "Projected Tree Inventory":
+if page == "Lot Map":
+    st.title("Lot Map")
+    st.image("map_larger.png")
+
+elif page == "Tree Inventory":
+    st.title("2025 Tree Inventory")
+    st.write("Display tree inventory details here.")
+
+elif page == "Tree Maintenance":
+    st.title("Tree Maintenance Table")
+    st.write("Maintenance tasks for the trees can be managed here.")
+
+elif page == "Projected Tree Inventory":
     st.title("Projected Tree Inventory")
     projected_data = project_tree_growth(data)
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1)
@@ -90,3 +102,4 @@ if page == "Projected Tree Inventory":
     
     summary_data = create_summary(projected_data)
     st.dataframe(summary_data)
+
