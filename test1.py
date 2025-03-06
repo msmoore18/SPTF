@@ -125,7 +125,7 @@ if page == "Tree Inventory":
     fig.update_layout(legend=dict(x=.1, y=0.5))
     st.plotly_chart(fig)
 
-    # Additional Plot: Tree Count vs Lot (only appears if selected_lot == 'All')
+    # Tree Count vs Lot (only appears if selected_lot == 'All')
     if selected_lot == 'All':
         lot_group = filtered_data.groupby("Lot")["Count"].sum().reset_index()
         fig_lot = px.bar(lot_group, x='Lot', y='Count',
@@ -136,9 +136,9 @@ if page == "Tree Inventory":
         st.plotly_chart(fig_lot)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Additional Plot: Tree Count vs Row (only appears if selected_lot does not = 'All')
+    # Tree Count vs Row (only appears if selected_lot does not = 'All')
     if selected_lot != 'All':
-        lot_group = filtered_data.groupby("Lot")["Count"].sum().reset_index()
+        lot_group = filtered_data.groupby("Row")["Count"].sum().reset_index()
         fig_lot = px.bar(lot_group, x='Row', y='Count',
                          labels={'Row': 'Row', 'Count': 'Tree Count'})
         fig_lot.update_layout(xaxis=dict(type='category'))
