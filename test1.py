@@ -75,7 +75,7 @@ if page == "Tree Inventory":
 elif page == "SPTF Lot Map":
     st.title("SPTF Lot Map")
     st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
-    st.image("SPTF.png", width=100)
+    st.image("SPTF.png", width=200)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
