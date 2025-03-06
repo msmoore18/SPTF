@@ -59,7 +59,7 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):
         
         # Add new trees each year, all starting at 0.5ft and growing annually
         new_trees = pd.DataFrame({
-            "Tree Height (ft)": [0.5 + y for y in range(year + 1)],  # Trees added every year and grow
+            "Tree Height (ft)": [1 + y for y in range(year + 1)],  # Trees added every year and grow
             "Year": [2025 + year] * (year + 1),
             "Lot": ["N/A"] * (year + 1),
             "Row": ["N/A"] * (year + 1),
