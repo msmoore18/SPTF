@@ -82,11 +82,8 @@ elif page == "Rudy's Page":
     
     # Display table
     st.write("#### Summary Table")
-    st.dataframe(tree_summary)
+    if st.button("Print Table"):
+        st.write("<script>window.print();</script>", unsafe_allow_html=True)
+    st.dataframe(tree_summary, hide_index=True)
     
-    # Bar chart visualization
-    st.write("#### Tree Distribution by Lot and Row")
-    fig = px.bar(tree_summary, x='Lot', y='Count', color='Quality', facet_col='Row',
-                 labels={'Lot': 'Lot Number', 'Count': 'Tree Count', 'Quality': 'Tree Quality'},
-                 title='Tree Distribution by Lot and Row')
-    st.plotly_chart(fig)
+    
