@@ -60,11 +60,11 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):
     for year in range(0, years + 1):
         year_data = data.copy()
         year_data["Year"] = 2025 + year
-        year_data["Tree Height (ft)"] += year_data["Tree Height (ft)"].apply(lambda x: min(2, x + year * 0.5) if x < 2 else x + year)
+        year_data["Tree Height (ft)"] += year_data["Tree Height (ft)"].apply(lambda x: min(2, x + 0.5 * year) if x < 2 else x + max(0, year - (2 - x) * 2))
         
         # Add new trees for this year
         new_trees = pd.DataFrame({
-            "Tree Height (ft)": [min(2, year * 0.5) + max(0, (year - 4))],
+            "Tree Height (ft)": [min(2, 0.5 * year) if year < 4 else (year - 2)],
             "Year": [2025 + year],
             "Lot": ["N/A"],
             "Row": ["N/A"],
@@ -81,7 +81,7 @@ def create_summary(projection, years=10):
     return summary
 
 if st.button("Calculate"):
-    projected_data = project_tree_growth(data, new_trees_per_year=new_trees_per_year)
+    projected_data = project_tree_growth(data, years=10, new_trees_per_year=st.session_state["new_trees"])
     summary_data = create_summary(projected_data)
     st.session_state["summary_data"] = summary_data
 
