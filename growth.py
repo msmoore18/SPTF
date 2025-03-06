@@ -49,12 +49,6 @@ page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree I
 if "new_trees" not in st.session_state:
     st.session_state["new_trees"] = 0
 
-if page == "Projected Tree Inventory":
-    st.title("Projected Tree Inventory")
-    
-    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
-    st.session_state["new_trees"] = new_trees_per_year
-
 def project_tree_growth(data, years=10, new_trees_per_year=0):
     projections = []
     for year in range(0, years + 1):
@@ -80,14 +74,20 @@ def create_summary(projection, years=10):
     summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
     return summary
 
-if st.button("Calculate"):
-    projected_data = project_tree_growth(data, years=10, new_trees_per_year=st.session_state["new_trees"])
-    summary_data = create_summary(projected_data)
-    st.session_state["summary_data"] = summary_data
-
-if "summary_data" in st.session_state:
-    st.dataframe(st.session_state["summary_data"])
-
-if st.button("Clear Data"):
-    st.session_state.clear()
-    st.rerun()
+if page == "Projected Tree Inventory":
+    st.title("Projected Tree Inventory")
+    
+    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
+    st.session_state["new_trees"] = new_trees_per_year
+    
+    if st.button("Calculate"):
+        projected_data = project_tree_growth(data, years=10, new_trees_per_year=st.session_state["new_trees"])
+        summary_data = create_summary(projected_data)
+        st.session_state["summary_data"] = summary_data
+    
+    if "summary_data" in st.session_state:
+        st.dataframe(st.session_state["summary_data"])
+    
+    if st.button("Clear Data"):
+        st.session_state.clear()
+        st.rerun()
