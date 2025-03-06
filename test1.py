@@ -59,7 +59,9 @@ if page == "Tree Inventory":
         fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', 
                      labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'})
         fig.update_layout(xaxis=dict(tickmode='array', tickvals=height_group.index))
+        st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
         st.plotly_chart(fig)
+        st.markdown('</div>', unsafe_allow_html=True)
 
         # Pie Chart
         st.write("### Tree Count vs Height")
@@ -72,7 +74,9 @@ if page == "Tree Inventory":
 
 elif page == "SPTF Lot Map":
     st.title("SPTF Lot Map")
+    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
     st.image("SPTF.png", width=600)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 elif page == "Tree Maintenance":
@@ -91,4 +95,6 @@ elif page == "Tree Maintenance":
         file_name="tree_summary.csv",
         mime="text/csv"
     )
+    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
     st.dataframe(tree_summary, hide_index=True)
+    st.markdown('</div>', unsafe_allow_html=True)
