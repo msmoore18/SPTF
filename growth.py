@@ -10,7 +10,7 @@ def adjust_heights(df, year):
     return df
 
 # Load the dataset
-file_path = "SPTF_count.xlsx"
+file_path = "SPTF_Count.xlsx"
 if not os.path.exists(file_path):
     st.error("SPTF_count.xlsx not found! Please upload the file.")
 else:
