@@ -124,7 +124,7 @@ if page == "Tree Inventory":
                              labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
         height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
         fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
-        fig.update_layout(legend=dict(x=-0.4, y=0.5))
+        fig.update_layout(legend=dict(x=-0.1, y=0.5))
         st.plotly_chart(fig)
 
 elif page == "Lot Map":
