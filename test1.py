@@ -15,7 +15,7 @@ data = load_data()
 
 
 # Sidebar for navigation
-page = st.tabs(["Bob's Page", "Rudy's Page"])
+tab1, tab2 = st.tabs(["Bob's Page", "Rudy's Page"])
 
 # Sidebar for filters
 st.sidebar.header("Filter Options")
