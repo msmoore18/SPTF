@@ -41,14 +41,45 @@ if "data" not in st.session_state:
         st.rerun()
     st.stop()
 
-data = st.session_state["data"].copy()
+if "data" in st.session_state:
+    data = st.session_state["data"].copy()
+else:
+    st.error("Data not loaded. Please enter the correct password.")
+    st.stop()
 
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
+def project_tree_growth(data, years=10, new_trees_per_year=0):
+    projections = []
+    for year in range(0, years + 1):
+        year_data = data.copy()
+        year_data["Year"] = 2025 + year
+        year_data["Tree Height (ft)"] += year  # Grow all trees 1ft per year
+        
+        # Add new trees each year, all starting at 0.5ft
+        new_trees = pd.DataFrame({
+            "Tree Height (ft)": [0.5 + year],  # New trees start at 0.5ft and grow 1ft per year
+            "Year": [2025 + year],
+            "Lot": ["N/A"],
+            "Row": ["N/A"],
+            "Quality": ["N/A"],
+            "Count": [new_trees_per_year]
+        })
+        
+        year_data = pd.concat([year_data, new_trees], ignore_index=True)
+        projections.append(year_data)
+    return pd.concat(projections)
+
+def create_summary(projection, years=10):
+    summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
+    return summary
 
 if page == "Projected Tree Inventory":
     st.title("Projected Tree Inventory")
+    
+    if "new_trees" not in st.session_state:
+        st.session_state["new_trees"] = 0
     
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
     st.session_state["new_trees"] = new_trees_per_year
