@@ -49,38 +49,44 @@ def project_tree_growth(data, years=10):
         projection[f'Year {2025 + year}'] = projection['Tree Height (ft)'].apply(lambda x: x + 1 if x > 2 else x + 0.5)
     return projection
 
-projected_data = project_tree_growth(data)
-
-def update_with_new_trees(projection, years=10):
-    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1)
+def update_with_new_trees(projection, years=10, new_trees_per_year=0):
+    new_tree_entries = []
     for year in range(1, years + 1):
-        projection = projection.append({
+        new_tree_entries.append({
             'Tree Height (ft)': 0.5,
             f'Year {2025 + year}': 0.5,
             'Lot': 'N/A',
             'Row': 'N/A',
             'Quality': 'N/A',
             'Count': new_trees_per_year
-        }, ignore_index=True)
-    return projection
+        })
+    return pd.concat([projection, pd.DataFrame(new_tree_entries)], ignore_index=True)
 
-projected_data = update_with_new_trees(projected_data)
-
-def apply_sales(projection, years=10):
-    st.subheader("Specify Sales Numbers")
-    sales = {}
-    for year in range(1, years + 1):
-        sales[f'Year {2025 + year}'] = st.number_input(f"Trees to sell in {2025 + year}", min_value=0, step=1)
+def apply_sales(projection, years=10, sales={}):
     for year_col in sales:
-        projection[year_col] = projection[year_col] - sales[year_col]
-        projection[year_col] = projection[year_col].clip(lower=0)
+        if year_col in projection.columns:
+            projection[year_col] = projection[year_col] - sales[year_col]
+            projection[year_col] = projection[year_col].clip(lower=0)
     return projection
-
-projected_data = apply_sales(projected_data)
 
 def create_summary(projection, years=10):
     summary = projection.groupby("Tree Height (ft)")[[f'Year {2025 + i}' for i in range(1, years + 1)]].sum().reset_index()
     return summary
 
-summary_data = create_summary(projected_data)
-st.dataframe(summary_data)
+st.sidebar.title("Navigation")
+page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
+
+if page == "Projected Tree Inventory":
+    st.title("Projected Tree Inventory")
+    projected_data = project_tree_growth(data)
+    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1)
+    projected_data = update_with_new_trees(projected_data, new_trees_per_year=new_trees_per_year)
+    
+    st.subheader("Specify Sales Numbers")
+    sales = {}
+    for year in range(1, 11):
+        sales[f'Year {2025 + year}'] = st.number_input(f"Trees to sell in {2025 + year}", min_value=0, step=1)
+    projected_data = apply_sales(projected_data, sales=sales)
+    
+    summary_data = create_summary(projected_data)
+    st.dataframe(summary_data)
