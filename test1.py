@@ -16,10 +16,10 @@ data = load_data()
 col_main, col_right = st.columns([4, 1])
 
 with col_right:
-    st.markdown("### Right Sidebar")
-    st.write("Additional options or information can go here.")
-    # Example additional filter
-    extra_filter = st.selectbox("Example Filter", ["Option 1", "Option 2", "Option 3"])
+    st.markdown("### Lot Map")
+    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
+    st.image("SPTF.png", width=300)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
@@ -80,12 +80,6 @@ if page == "Tree Inventory":
         fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
         fig.update_layout(legend=dict(x=-0.4, y=0.5))
         st.plotly_chart(fig)
-
-elif page == "SPTF Lot Map":
-    st.title("SPTF Lot Map")
-    st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
-    st.image("SPTF.png", width=300)
-    st.markdown('</div>', unsafe_allow_html=True)
 
 elif page == "Projected Tree Inventory":
     st.title("Under Construction")
