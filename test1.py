@@ -14,15 +14,18 @@ def load_data(password):
         with open(file_path, "rb") as file:
             decrypted = io.BytesIO()
             office_file = msoffcrypto.OfficeFile(file)
-
-            if not office_file.is_encrypted():
-                return pd.read_excel(file_path)
-
-            office_file.load_key(password)
+            office_file.load_key(password=password)
             office_file.decrypt(decrypted)
-            return pd.read_excel(decrypted)
-    except Exception:
-        return None
+
+            # Load main data from the first sheet by default
+            data = pd.read_excel(decrypted, sheet_name=0)
+
+            # Load sidebar info from the second sheet
+            info_df = pd.read_excel(decrypted, sheet_name=1)
+            
+            return data, info_df
+    except Exception as e:
+        return None, None
 
 # User enters password
 if "data" not in st.session_state:
@@ -66,19 +69,16 @@ if "data" in st.session_state:
 else:
     st.stop()
 
-# Load Excel file and read second sheet/tab (assuming index starts from 0)
-info_df = pd.read_excel("SPTF_Count.xlsx", sheet_name=1)
+# Display sidebar information once data is loaded
+info_df = pd.read_excel("SPTF_Count.xlsx", sheet_name=1)  # read the second tab directly
+info_dict = pd.Series(info_df.iloc[:,1].values, index=info_df.iloc[:,0]).to_dict()
 
-# Convert the DataFrame into a dictionary for easy access
-file_info = dict(zip(info_df.iloc[:, 0], info_df.iloc[:, 1]))
-
-# Display at the top of sidebar
 with st.sidebar:
     st.markdown("## 📌 File Information")
-    st.markdown(f"**File Name:** {file_info.get('File Name', 'N/A')}")
-    st.markdown(f"**Version:** {file_info.get('Version', 'N/A')}")
-    st.markdown(f"**Date Updated:** {file_info.get('Date Update', 'N/A')}")
-    st.markdown(f"**Updated By:** {file_info.get('Updated By', 'N/A')}")
+    st.markdown(f"**File Name:** {info_dict.get('File Name', 'N/A')}")
+    st.markdown(f"**Version:** {info_dict.get('Version', 'N/A')}")
+    st.markdown(f"**Date Updated:** {info_dict.get('Date Updated', 'N/A')}")
+    st.markdown(f"**Updated By:** {info_dict.get('Updated By', 'N/A')}")
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
