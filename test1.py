@@ -16,7 +16,7 @@ data = load_data()
 
 # Sidebar for navigation
 st.sidebar.markdown("# Navigation")
-page = st.sidebar.radio("# Go to", ["Tree Inventory", "Tree Maintenance", "Spruce Point Tree Farm Lot Map"])
+page = st.sidebar.radio("# Go to", ["Tree Inventory", "Tree Maintenance", "SPTF Lot Map"])
 
 # Sidebar for filters
 st.sidebar.header("Filter Options")
