@@ -75,20 +75,18 @@ if page == "Bob's Page":
         st.image("SPTF.png", width=375)
 
 elif page == "Rudy's Page":
+    st.write("### Tree Summary")
     
-    # B Trees Table: To Be Pruned
-    st.write("### B Trees: To Be Pruned")
-    b_trees = data[data['Quality'] == 'B'][['Lot', 'Row', 'Tree Height (ft)', 'Count']].sort_values(by=['Lot', 'Row'])
-    if not b_trees.empty:
-        st.dataframe(b_trees, hide_index=True)
-    else:
-        st.write("No B quality trees found.")
+    # Filtered summary of trees
+    tree_summary = filtered_data.groupby(["Quality", "Lot", "Row"])['Count'].sum().reset_index()
     
-    # C Trees Table: To Be Cut
-    st.write("### C Trees: To Be Cut")
-    c_trees = data[data['Quality'] == 'C'][['Lot', 'Row', 'Tree Height (ft)']].sort_values(by=['Lot', 'Row'])
-    if not c_trees.empty:
-        st.dataframe(c_trees, hide_index=True)
-    else:
-        st.write("No C quality trees found.")
-  
+    # Display table
+    st.write("#### Summary Table")
+    st.dataframe(tree_summary)
+    
+    # Bar chart visualization
+    st.write("#### Tree Distribution by Lot and Row")
+    fig = px.bar(tree_summary, x='Lot', y='Count', color='Quality', facet_col='Row',
+                 labels={'Lot': 'Lot Number', 'Count': 'Tree Count', 'Quality': 'Tree Quality'},
+                 title='Tree Distribution by Lot and Row')
+    st.plotly_chart(fig)
