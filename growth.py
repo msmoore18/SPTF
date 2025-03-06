@@ -76,6 +76,24 @@ def create_summary(projection, years=10):
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
+# Sidebar filters
+st.sidebar.header("Filter Options")
+height_range = st.sidebar.slider(
+    "Select Tree Height Range (ft)",
+    int(data["Tree Height (ft)"].min()),
+    int(data["Tree Height (ft)"].max()),
+    (
+        int(data["Tree Height (ft)"].min()),
+        int(data["Tree Height (ft)"].max())
+    )
+)
+
+quality_options = st.sidebar.multiselect(
+    "Select Quality",
+    options=data["Quality"].unique(),
+    default=data["Quality"].unique()
+)
+
 if page == "Lot Map":
     st.title("Lot Map")
     st.image("map_larger.png")
