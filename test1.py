@@ -11,7 +11,7 @@ import msoffcrypto
 import io
 
 @st.cache_data
-def load_data(password=None):
+def load_data(password):
     file_path = "SPTF_Count.xlsx"
     with open(file_path, "rb") as file:
         decrypted = io.BytesIO()
@@ -21,12 +21,13 @@ def load_data(password=None):
         return pd.read_excel(decrypted)  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
 
 password = st.sidebar.text_input("Enter Excel Password", type="password")
-if password:
-    try:
-        data = load_data(password)
-    except Exception as e:
-        st.error("Incorrect password or file issue. Please try again.")
+enter_button = st.sidebar.button("Enter")
+if password and enter_button:
+    data = load_data(password)
+    if data is None:
+        st.error("Incorrect password. Please try again.")
         st.stop()
+    
 else:
     st.warning("Please enter a password to load the Excel file.")
     st.stop()
