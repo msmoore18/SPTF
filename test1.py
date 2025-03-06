@@ -38,8 +38,9 @@ quality_options = st.sidebar.multiselect(
     options=data["Quality"].unique(),
     default=data["Quality"].unique()
 )
-if page == "Tree Maintenance":nce":
-    lots = st.sidebar.selectbox("Select Lot", options=data["Lot"].uniquif page == "Tree Inventory":age":
+if page == "Tree Maintenance":
+    lots = st.sidebar.selectbox("Select Lot", options=data["Lot"].unique())
+if page == "Tree Inventory":
     lots = st.sidebar.multiselect("Select Lots", options=data["Lot"].unique(), default=data["Lot"].unique())
 
 # Filter data based on selected filters
@@ -49,7 +50,7 @@ filtered_data = data[
     (data["Quality"].isin(quality_options))
 ]
 
-if page == "Bob's Page":
+if page == "Tree Inventory":
     # Layout: Main content on left, image on right
     col1, col2 = st.columns([4, 2])
 
@@ -71,7 +72,10 @@ if page == "Bob's Page":
 
     with col2:
         # Display Image
-        st.image("SPTF.png", width=3elif page == "Tree Maintenance":e Summary")
+        st.image("SPTF.png", width=375)
+
+elif page == "Tree Maintenance":
+    st.write("### Tree Summary")
     
     # Filtered summary of trees
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])['Count'].sum().reset_index()
