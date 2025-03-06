@@ -1,6 +1,4 @@
 import streamlit as st
-import msoffcrypto
-import io
 import pandas as pd
 import plotly.express as px
 import msoffcrypto
@@ -23,15 +21,15 @@ def load_data(password):
             office_file.load_key(password)
             office_file.decrypt(decrypted)
             return pd.read_excel(decrypted)
-    except Exception as e:
+    except Exception:
         return None
 
 # User enters password
-st.title("Enter Password to Access Data")
-password = st.text_input("Excel File Password:", type="password")
-enter_button = st.button("Enter")
-
 if "data" not in st.session_state:
+    st.title("Enter Password to Access Data")
+    password = st.text_input("Excel File Password:", type="password")
+    enter_button = st.button("Enter")
+
     if password and enter_button:
         data = load_data(password)
         if data is None:
@@ -39,11 +37,14 @@ if "data" not in st.session_state:
             st.stop()
         else:
             st.session_state["data"] = data
-            st.rerun()
+            st.rerun()  # Refresh the page after loading data
 
+# Ensure data is available before proceeding
 if "data" in st.session_state:
     data = st.session_state["data"]
     st.success("Excel file loaded successfully.")
+else:
+    st.stop()
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
@@ -83,7 +84,6 @@ filtered_data = data[
 
 if page == "Tree Inventory":
     st.title("2025 Inventory for Spruce Point Tree Farm")
-  
     st.write(f"### Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}")
     
     col1, col2 = st.columns([4, 2])
@@ -109,8 +109,6 @@ elif page == "Lot Map":
     st.title("Lot Map")
     st.image("SPTF.png", width=300)
 
-
-
 elif page == "Projected Tree Inventory":
     st.title("Under Construction")
 
@@ -134,7 +132,3 @@ elif page == "Tree Maintenance":
     st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
     st.dataframe(tree_summary, hide_index=True)
     st.markdown('</div>', unsafe_allow_html=True)
-
-  
-
-
