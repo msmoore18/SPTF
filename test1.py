@@ -83,6 +83,7 @@ elif page == "Projected Tree Inventory":
 
 elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
+    st.write(f"### Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}")
     st.write("This page lets you customize and download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut), Lot #, and Tree Height you want displayed in the table")
     
     # Filtered summary of trees
