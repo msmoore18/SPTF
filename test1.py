@@ -141,6 +141,7 @@ if page == "Tree Inventory":
                     line=dict(color="black", width=2),
                 )
             ]
+        )
 
 elif page == "Lot Map":
     st.title("Lot Map")
