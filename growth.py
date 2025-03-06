@@ -76,6 +76,40 @@ def create_summary(projection, years=10):
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
+# Sidebar filters
+st.sidebar.header("Filter Options")
+height_range = st.sidebar.slider(
+    "Select Tree Height Range (ft)",
+    int(data["Tree Height (ft)"].min()),
+    int(data["Tree Height (ft)"].max()),
+    (
+        int(data["Tree Height (ft)"].min()),
+        int(data["Tree Height (ft)"].max())
+    )
+)
+
+quality_options = st.sidebar.multiselect(
+    "Select Quality",
+    options=data["Quality"].unique(),
+    default=data["Quality"].unique()
+)
+
+lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
+selected_lot = st.sidebar.selectbox("Select Lot", options=lot_options)
+if selected_lot == 'All':
+    lots = data["Lot"].unique()
+else:
+    lots = [selected_lot]
+
+# Filter data based on selections
+tree_size_summary = data.groupby("Tree Height (ft)")["Count"].sum().reset_index()
+
+filtered_data = data[
+    (data["Lot"].isin(lots)) &
+    (data["Tree Height (ft)"].between(height_range[0], height_range[1])) &
+    (data["Quality"].isin(quality_options))
+]
+
 if page == "Lot Map":
     st.title("Lot Map")
     st.image("map_larger.png")
