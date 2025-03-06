@@ -48,7 +48,7 @@ else:
     st.stop()
 
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
+st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
 def project_tree_growth(data, years=10, new_trees_per_year=0):
     projections = []
@@ -57,14 +57,14 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):
         year_data["Year"] = 2025 + year
         year_data["Tree Height (ft)"] += year  # Grow all trees 1ft per year
         
-        # Add new trees each year, all starting at 0.5ft
+        # Add new trees each year, all starting at 0.5ft and growing annually
         new_trees = pd.DataFrame({
-            "Tree Height (ft)": [0.5 + year],  # New trees start at 0.5ft and grow 1ft per year
-            "Year": [2025 + year],
-            "Lot": ["N/A"],
-            "Row": ["N/A"],
-            "Quality": ["N/A"],
-            "Count": [new_trees_per_year]
+            "Tree Height (ft)": [0.5 + y for y in range(year + 1)],  # Trees added every year and grow
+            "Year": [2025 + year] * (year + 1),
+            "Lot": ["N/A"] * (year + 1),
+            "Row": ["N/A"] * (year + 1),
+            "Quality": ["N/A"] * (year + 1),
+            "Count": [new_trees_per_year] * (year + 1)
         })
         
         year_data = pd.concat([year_data, new_trees], ignore_index=True)
@@ -75,7 +75,7 @@ def create_summary(projection, years=10):
     summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
     return summary
 
-if page == "Projected Tree Inventory":
+if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"]):
     st.title("Projected Tree Inventory")
     
     if "new_trees" not in st.session_state:
