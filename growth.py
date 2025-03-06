@@ -15,7 +15,7 @@ def adjust_heights(df, year):
 st.set_page_config(layout="wide")
 
 def load_data(password):
-    file_path = "SPTF_count.xlsx"
+    file_path = "SPTF_Count.xlsx"
     try:
         with open(file_path, "rb") as file:
             decrypted = io.BytesIO()
