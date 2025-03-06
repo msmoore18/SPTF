@@ -8,14 +8,23 @@ st.set_page_config(layout="wide")
 
 # Load data from Excel file in the same GitHub repository
 @st.cache_data
-def load_data():
-    return pd.read_excel("SPTF_Count.xlsx")  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
+import msoffcrypto
+import io
 
-uploaded_file = st.sidebar.file_uploader("Upload your Excel file", type=["xlsx"])
-if uploaded_file:
-    data = pd.read_excel(uploaded_file)
-else:
-    st.warning("Please upload an Excel file to proceed.")
+def load_data(password=None):
+    file_path = "SPTF_Count.xlsx"
+    with open(file_path, "rb") as file:
+        decrypted = io.BytesIO()
+        office_file = msoffcrypto.OfficeFile(file)
+        office_file.load_key(password)
+        office_file.decrypt(decrypted)
+        return pd.read_excel(decrypted)  # Ensure 'SPTF_Tree_Count.xlsx' is in the same repo
+
+password = st.sidebar.text_input("Enter Excel Password", type="password")
+try:
+    data = load_data(password)
+except Exception as e:
+    st.error("Incorrect password or file issue. Please try again.")
     st.stop()
 
 # Sidebar for navigation
