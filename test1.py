@@ -46,6 +46,7 @@ if page == "Tree Maintenance":
     else:
         lots = [selected_lot]
 if page == "Tree Inventory":
+    st.title("2025 Inventory for Spruce Point Tree Farm")
     lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
     selected_lot = st.sidebar.selectbox("Select Lot", options=lot_options)
     if selected_lot == 'All':
