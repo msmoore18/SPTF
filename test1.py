@@ -14,11 +14,15 @@ def load_data(password):
         with open(file_path, "rb") as file:
             decrypted = io.BytesIO()
             office_file = msoffcrypto.OfficeFile(file)
-            office_file.load_key(password=password)
+
+            if not office_file.is_encrypted():
+                return pd.read_excel(file_path)
+
+            office_file.load_key(password)
             office_file.decrypt(decrypted)
-            return data, info_df
-    except Exception as e:
-        return None, None
+            return pd.read_excel(decrypted)
+    except Exception:
+        return None
 
 # User enters password
 if "data" not in st.session_state:
@@ -55,6 +59,8 @@ if "data" not in st.session_state:
         st.rerun()  # Now outside the callback, safe to call
 
     st.stop()
+
+
 
 # Ensure data is available before proceeding
 if "data" in st.session_state:
@@ -101,7 +107,7 @@ filtered_data = data[
 if page == "Tree Inventory":
     st.title("2025 Inventory for Spruce Point Tree Farm")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
-    
+
     # Tree Count vs Tree Height
     height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
     fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', 
@@ -141,11 +147,11 @@ elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
     st.write("This page lets you customize and download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut), Lot #, and Tree Height you want displayed in the table")
-    
+
     # Filtered summary of trees
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])['Count'].sum().reset_index()
     tree_summary["Work Completed?"] = ""
-    
+
     # Display table
     csv = tree_summary.to_csv(index=False).encode('utf-8')
     st.download_button(
