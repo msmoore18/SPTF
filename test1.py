@@ -100,7 +100,7 @@ if page == "Tree Inventory":
         file_name="tree_summary.csv",
         mime="text/csv"
     )
-    st.dataframe(tree_summary, hide_index=True). Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut), Lot #, and Tree Height you want displayed in the table")
+    st.dataframe(tree_summary, hide_index=True)
 
 elif page == "SPTF Lot Map":
     st.title("SPTF Lot Map")
