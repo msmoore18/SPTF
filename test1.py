@@ -44,9 +44,14 @@ def load_data(password=None):
 # User inputs password
 if 'data' in locals() and data is not None:
     st.sidebar.success("Loaded file: SPTF_Count.xlsx")
+    password = None  # Clear password input
+    enter_button = None
+    st.sidebar.success("Loaded file: SPTF_Count.xlsx")
 else:
     if 'data' not in locals() or data is None:
+        if 'data' not in locals() or data is None:
         password = st.sidebar.text_input("Enter Excel Password", type="password", key="password_input")
+        if 'data' not in locals() or data is None:
         enter_button = st.sidebar.button("Enter", key="enter_button")
     
     if password and enter_button:
