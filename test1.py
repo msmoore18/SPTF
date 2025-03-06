@@ -55,12 +55,6 @@ else:
             st.stop()
         else:
             st.sidebar.success("Loaded file: SPTF_Count.xlsx")
-        data = load_data(password)
-        if data is None:
-            st.error("Incorrect password or file issue. Please try again.")
-            st.stop()
-        else:
-            st.sidebar.success("Loaded file: SPTF_Count.xlsx")
     else:
         st.warning("Please enter a password to load the Excel file.")
         st.stop()
