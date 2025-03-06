@@ -60,13 +60,25 @@ if "data" not in st.session_state:
 
     st.stop()
 
-
-
 # Ensure data is available before proceeding
 if "data" in st.session_state:
     data = st.session_state["data"]
 else:
     st.stop()
+
+# Load Excel file and read second sheet/tab (assuming index starts from 0)
+info_df = pd.read_excel("SPTF_Count.xlsx", sheet_name=1)
+
+# Convert the DataFrame into a dictionary for easy access
+file_info = dict(zip(info_df.iloc[:, 0], info_df.iloc[:, 1]))
+
+# Display at the top of sidebar
+with st.sidebar:
+    st.markdown("## 📌 File Information")
+    st.markdown(f"**File Name:** {file_info.get('File Name', 'N/A')}")
+    st.markdown(f"**Version:** {file_info.get('Version', 'N/A')}")
+    st.markdown(f"**Date Updated:** {file_info.get('Date Update', 'N/A')}")
+    st.markdown(f"**Updated By:** {file_info.get('Updated By', 'N/A')}")
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
