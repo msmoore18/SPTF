@@ -78,7 +78,7 @@ elif page == "Rudy's Page":
     st.write("### Tree Summary")
     
     # Filtered summary of trees
-    tree_summary = filtered_data.groupby(["Quality", "Lot", "Row"])['Count'].sum().reset_index()
+    tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])['Count'].sum().reset_index()
     tree_summary["Work Completed?"] = ""
     
     # Display table
