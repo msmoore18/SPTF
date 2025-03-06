@@ -75,15 +75,11 @@ if page == "Tree Inventory":
 elif page == "SPTF Lot Map":
     st.title("Lot Map")
 
-    # Center the image using markdown with HTML styling
-    st.markdown(
-        """
-        <div style="display: flex; justify-content: center;">
-            <img src="SPTF.png" width="300">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Center the image properly using markdown and st.image
+    st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+    st.image("SPTF.png", width=300)
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 elif page == "Projected Tree Inventory":
