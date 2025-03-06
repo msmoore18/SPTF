@@ -7,10 +7,10 @@ import plotly.express as px
 st.set_page_config(layout="wide")
 
 # Load data from Excel file in the same GitHub repository
-@st.cache_data
 import msoffcrypto
 import io
 
+@st.cache_data
 def load_data(password=None):
     file_path = "SPTF_Count.xlsx"
     with open(file_path, "rb") as file:
