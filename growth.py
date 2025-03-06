@@ -41,7 +41,14 @@ if "data" not in st.session_state:
         st.rerun()
     st.stop()
 
-data = st.session_state["data"].copy()
+
+if page == "Projected Tree Inventory":
+    st.title("Projected Tree Inventory")
+
+  data = st.session_state["data"].copy()
+
+  new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
+  st.session_state["new_trees"] = new_trees_per_year
 
 def project_tree_growth(data, years=10):
     projections = []
@@ -83,16 +90,11 @@ def create_summary(projection, years=10):
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-if page == "Projected Tree Inventory":
-    st.title("Projected Tree Inventory")
     
     if "new_trees" not in st.session_state:
         st.session_state["new_trees"] = 0
     if "sales" not in st.session_state:
         st.session_state["sales"] = {f'Year {2025 + i}': 0 for i in range(0, 11)}
-    
-    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
-    st.session_state["new_trees"] = new_trees_per_year
     
     st.subheader("Specify Sales Numbers")
     for year in range(0, 11):
