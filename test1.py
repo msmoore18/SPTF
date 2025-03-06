@@ -152,7 +152,9 @@ elif page == "Lot Map":
     st.image("map_larger.png")
 
 elif page == "Projected Tree Inventory":
-    st.title("Under Construction")
+    st.title("Current Tree Inventory")
+    st.write("This table summarizes the number of trees based on their height categories.")
+    st.dataframe(tree_size_summary, hide_index=True)
 
 elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
