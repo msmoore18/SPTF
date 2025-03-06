@@ -39,7 +39,12 @@ quality_options = st.sidebar.multiselect(
     default=data["Quality"].unique()
 )
 if page == "Tree Maintenance":
-    lots = st.sidebar.selectbox("Select Lot", options=sorted(data["Lot"].unique(), key=lambda x: int(str(x))))
+    lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
+    selected_lot = st.sidebar.selectbox("Select Lot", options=lot_options)
+    if selected_lot == 'All':
+        lots = data["Lot"].unique()
+    else:
+        lots = [selected_lot]
 if page == "Tree Inventory":
     lots = st.sidebar.multiselect("Select Lots", options=data["Lot"].unique(), default=data["Lot"].unique())
 
