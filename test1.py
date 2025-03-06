@@ -71,6 +71,7 @@ if page == "Tree Inventory":
         st.plotly_chart(fig)
 
 elif page == "SPTF Lot Map":
+    st.title("SPTF Lot Map")
     st.image("SPTF.png", width=600)
 
 
