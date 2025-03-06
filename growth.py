@@ -41,15 +41,18 @@ if "data" not in st.session_state:
         st.rerun()
     st.stop()
 
+data = st.session_state["data"].copy()
+
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
 if page == "Projected Tree Inventory":
     st.title("Projected Tree Inventory")
-
-    data = st.session_state["data"].copy()
-  
-    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state.get("new_trees", 0))
+    
+    if "new_trees" not in st.session_state:
+        st.session_state["new_trees"] = 0
+    
+    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
     st.session_state["new_trees"] = new_trees_per_year
 
 def project_tree_growth(data, years=10):
@@ -57,23 +60,22 @@ def project_tree_growth(data, years=10):
     for year in range(0, years + 1):
         year_data = data.copy()
         year_data["Year"] = 2025 + year
-        year_data["Tree Height (ft)"] += year * year_data["Tree Height (ft)"].apply(lambda x: 0.5 if x < 2 else 1)
+        year_data["Tree Height (ft)"] += year_data["Tree Height (ft)"].apply(lambda x: min(2, x + year * 0.5) if x < 2 else x + year)
         projections.append(year_data)
     return pd.concat(projections)
 
 def update_with_new_trees(projection, years=10, new_trees_per_year=0):
     new_trees = []
     for year in range(0, years + 1):
-        for i in range(year + 1):
-            height = min(2, i * 0.5) + max(0, (i - 4))  # Grow 0.5 per year until 2ft, then 1ft per year
-            new_trees.append({
-                'Tree Height (ft)': height,
-                'Year': 2025 + year,
-                'Lot': 'N/A',
-                'Row': 'N/A',
-                'Quality': 'N/A',
-                'Count': new_trees_per_year if i == 0 else 0
-            })
+        height = min(2, year * 0.5) + max(0, (year - 4))  # Grow 0.5 per year until 2ft, then 1ft per year
+        new_trees.append({
+            'Tree Height (ft)': height,
+            'Year': 2025 + year,
+            'Lot': 'N/A',
+            'Row': 'N/A',
+            'Quality': 'N/A',
+            'Count': new_trees_per_year
+        })
     new_trees_df = pd.DataFrame(new_trees)
     return pd.concat([projection, new_trees_df], ignore_index=True)
 
