@@ -48,7 +48,6 @@ def project_tree_growth(data, years=10):
     for year in range(0, years + 1):
         year_data = data.copy()
         year_data["Year"] = 2025 + year
-        year_data["Tree Height (ft)"] = year_data["Tree Height (ft)"]
         for i in range(year):
             year_data["Tree Height (ft)"] += year_data["Tree Height (ft)"].apply(lambda x: 0.5 if x < 2 else 1)
         projections.append(year_data)
@@ -64,9 +63,10 @@ def update_with_new_trees(projection, years=10, new_trees_per_year=0):
             'Lot': 'N/A',
             'Row': 'N/A',
             'Quality': 'N/A',
-            'Count': 4000 if year == 0 else new_trees_per_year
+            'Count': new_trees_per_year
         })
-    return pd.concat([projection, pd.DataFrame(new_trees)], ignore_index=True)
+    new_trees_df = pd.DataFrame(new_trees)
+    return pd.concat([projection, new_trees_df], ignore_index=True)
 
 def apply_sales(projection, years=10, sales={}):
     for year in range(0, years + 1):
