@@ -140,6 +140,7 @@ if page == "Tree Inventory":
                     y1=1,
                     line=dict(color="black", width=2),
                 )
+            ]
 
 elif page == "Lot Map":
     st.title("Lot Map")
