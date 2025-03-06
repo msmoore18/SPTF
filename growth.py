@@ -54,13 +54,20 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):
     for year in range(0, years + 1):
         year_data = data.copy()
         year_data["Year"] = 2025 + year
-        year_data["Tree Height (ft)"] = year_data["Tree Height (ft)"].apply(
-            lambda x: x + (0.5 * min(year, (2 - x) * 2) if x < 2 else (1 * (year - max(0, (2 - x) * 2))))
-        )
+        
+        # Correct tree growth logic
+        def grow_tree(height, years):
+            if height < 2:
+                height = min(2, height + 0.5 * years)  # Grow 0.5ft per year until 2ft
+            if height >= 2:
+                height += max(0, years - (2 - height) * 2)  # After reaching 2ft, grow 1ft per year
+            return height
+        
+        year_data["Tree Height (ft)"] = year_data["Tree Height (ft)"].apply(lambda x: grow_tree(x, year))
         
         # Add new trees for each year
         new_trees = pd.DataFrame({
-            "Tree Height (ft)": [(0.5 * min(yr, 4) + max(0, yr - 4)) for yr in range(year + 1)],
+            "Tree Height (ft)": [grow_tree(0.5, yr) for yr in range(year + 1)],
             "Year": [2025 + year] * (year + 1),
             "Lot": ["N/A"] * (year + 1),
             "Row": ["N/A"] * (year + 1),
