@@ -104,4 +104,3 @@ with col_right:
     st.markdown("### Lot Map")
     st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
     st.image("SPTF.png", width=300)
-    st.markdown('</div>', unsafe_allow_html=True)
