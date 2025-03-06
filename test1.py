@@ -82,7 +82,6 @@ elif page == "Tree Maintenance":
     tree_summary["Work Completed?"] = ""
     
     # Display table
-    st.write("#### Summary Table")
     csv = tree_summary.to_csv(index=False).encode('utf-8')
     st.download_button(
         label="Download Table as CSV",
