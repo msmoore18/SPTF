@@ -127,6 +127,20 @@ if page == "Tree Inventory":
         fig.update_layout(legend=dict(x=.1, y=0.5))
         st.plotly_chart(fig)
 
+        # Add border around entire pie chart and legend
+        fig.update_layout(
+            shapes=[
+                dict(
+                    type="rect",
+                    xref="paper",
+                    yref="paper",
+                    x0=0,
+                    y0=0,
+                    x1=1,
+                    y1=1,
+                    line=dict(color="black", width=2),
+                )
+
 elif page == "Lot Map":
     st.title("Lot Map")
     st.image("map_larger.png")
