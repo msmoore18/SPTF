@@ -47,7 +47,7 @@ if page == "Tree Maintenance":
         lots = [selected_lot]
 if page == "Tree Inventory":
     lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
-    selected_lots = st.sidebar.multiselect("Select Lots", options=lot_options, default=lot_options[1:])
+    selected_lots = st.sidebar.selectbox("Select Lots", options=lot_options, default=lot_options[1:])
     if 'All' in selected_lots:
         lots = data["Lot"].unique()
     else:
