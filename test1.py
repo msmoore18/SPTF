@@ -40,7 +40,7 @@ quality_options = st.sidebar.multiselect(
 if page == "Rudy's Page":
     lots = st.sidebar.selectbox("Select Lot", options=data["Lot"].unique())
 else:
-    lots = st.sidebar.multiselect("Select Lots", options=data["Lot"].unique(), default=data["Lot"].unique())
+    lots = st.sidebar.radio("Select Lots", options=data["Lot"].unique(), default=data["Lot"].unique())
 
 # Filter data based on selected filters
 filtered_data = data[
