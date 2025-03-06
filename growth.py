@@ -46,11 +46,11 @@ data = st.session_state["data"].copy()
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
+if "new_trees" not in st.session_state:
+    st.session_state["new_trees"] = 0
+
 if page == "Projected Tree Inventory":
     st.title("Projected Tree Inventory")
-    
-    if "new_trees" not in st.session_state:
-        st.session_state["new_trees"] = 0
     
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
     st.session_state["new_trees"] = new_trees_per_year
@@ -60,7 +60,7 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):
     for year in range(0, years + 1):
         year_data = data.copy()
         year_data["Year"] = 2025 + year
-        year_data["Tree Height (ft)"] += year_data["Tree Height (ft)"].apply(lambda x: min(2, x + 0.5 * year) if x < 2 else x + max(0, year - (2 - x) * 2))
+        year_data["Tree Height (ft)"] = year_data["Tree Height (ft)"].apply(lambda x: x + min(2 - x, 0.5 * year) if x < 2 else x + max(0, year - (2 - x) * 2))
         
         # Add new trees for this year
         new_trees = pd.DataFrame({
