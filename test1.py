@@ -76,6 +76,22 @@ if page == "Bob's Page":
 
 elif page == "Rudy's Page":
     
+    # B Trees Table: To Be Pruned
+    st.write("### B Trees: To Be Pruned")
+    b_trees = data[data['Quality'] == 'B'][['Lot', 'Row', 'Tree Height (ft)']]
+    if not b_trees.empty:
+        st.dataframe(b_trees)
+    else:
+        st.write("No B quality trees found.")
+    
+    # C Trees Table: To Be Cut
+    st.write("### C Trees: To Be Cut")
+    c_trees = data[data['Quality'] == 'C'][['Lot', 'Row', 'Tree Height (ft)']]
+    if not c_trees.empty:
+        st.dataframe(c_trees)
+    else:
+        st.write("No C quality trees found.")
+    
     # Layout: Main content on left, image on right
     col1, col2 = st.columns([4, 2])
 
