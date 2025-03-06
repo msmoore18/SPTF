@@ -15,7 +15,8 @@ data = load_data()
 
 
 # Sidebar for navigation
-tab1, tab2 = st.tabs(["Bob's Page", "Rudy's Page"])
+st.sidebar.title("Navigation")
+page = st.sidebar.radio("Go to", ["Bob's Page", "Rudy's Page"])
 
 # Sidebar for filters
 st.sidebar.header("Filter Options")
@@ -37,9 +38,9 @@ quality_options = st.sidebar.multiselect(
     options=data["Quality"].unique(),
     default=data["Quality"].unique()
 )
-with tab2:
+if page == "Rudy's Page":
     lots = st.sidebar.selectbox("Select Lot", options=data["Lot"].unique())
-with tab1:
+if page == "Bob's Page":
     lots = st.sidebar.multiselect("Select Lots", options=data["Lot"].unique(), default=data["Lot"].unique())
 
 # Filter data based on selected filters
@@ -49,7 +50,7 @@ filtered_data = data[
     (data["Quality"].isin(quality_options))
 ]
 
-with tab1:
+if page == "Bob's Page":
     # Layout: Main content on left, image on right
     col1, col2 = st.columns([4, 2])
 
@@ -73,7 +74,7 @@ with tab1:
         # Display Image
         st.image("SPTF.png", width=375)
 
-with tab2:
+elif page == "Rudy's Page":
     st.write("### Tree Summary")
     
     # Filtered summary of trees
