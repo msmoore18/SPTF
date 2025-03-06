@@ -47,11 +47,11 @@ if page == "Tree Maintenance":
         lots = [selected_lot]
 if page == "Tree Inventory":
     lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
-    selected_lots = st.sidebar.selectbox("Select Lots", options=lot_options, default=lot_options[1:])
-    if 'All' in selected_lots:
+    selected_lot = st.sidebar.selectbox("Select Lot", options=lot_options)
+    if selected_lot == 'All':
         lots = data["Lot"].unique()
     else:
-        lots = selected_lots
+        lots = [selected_lot]
 
 # Filter data based on selected filters
 filtered_data = data[
