@@ -70,7 +70,7 @@ else:
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
+page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Tree Maintenance"])
 
 # Sidebar filters
 st.sidebar.header("Filter Options")
@@ -152,11 +152,6 @@ if page == "Tree Inventory":
 elif page == "Lot Map":
     st.title("Lot Map")
     st.image("map_larger.png")
-
-elif page == "Projected Tree Inventory":
-    st.title("Current Tree Inventory")
-    st.write("This table summarizes the total number of planted trees based on their height categories. Note that this table does not change based on your selected Filter Options.")
-    st.dataframe(tree_size_summary, hide_index=True)
 
 elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
