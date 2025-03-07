@@ -50,7 +50,6 @@ else:
 st.sidebar.title("Navigation")
 st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-def project_tree_growth(data, years=10, new_trees_per_year=0):
 def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_per_year=0):
     projections = []
     height_distribution = {h: data[data["Tree Height (ft)"] == h]["Count"].sum() for h in range(1, 21)}
