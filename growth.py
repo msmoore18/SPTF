@@ -88,7 +88,7 @@ if page == "Projected Tree Inventory":
         office_file.load_key(excel_password)  # Use stored password
         office_file.decrypt(decrypted)
     
-    wb = openpyxl.load_workbook(decrypted, data_only=False)  # Load raw formulas first
+    wb = openpyxl.load_workbook(decrypted, data_only=False)  # Load formulas first
     ws = wb["calculations"]
 
     # Retrieve Tree Heights from Column N (N2:N28)
@@ -134,13 +134,13 @@ if page == "Projected Tree Inventory":
         wb.save(excel_modified)
         excel_modified.seek(0)
 
-        # **Reload updated calculations (computed values, NOT formulas)**
-        updated_wb = openpyxl.load_workbook(excel_modified, data_only=True)  # Load computed values
-        updated_ws = updated_wb["calculations"]
+        ### **Force Excel Recalculation by Reopening the File**
+        wb = openpyxl.load_workbook(excel_modified, data_only=True)  # Reload computed values
+        ws = wb["calculations"]
 
         # Extract the A1:L28 range as a DataFrame
         data_range = []
-        for row in updated_ws.iter_rows(min_row=1, max_row=28, min_col=1, max_col=12, values_only=True):
+        for row in ws.iter_rows(min_row=1, max_row=28, min_col=1, max_col=12, values_only=True):
             row_data = [cell if cell is not None else 0 for cell in row]  # Replace None with 0
             data_range.append(row_data)
         
