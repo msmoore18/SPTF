@@ -97,37 +97,23 @@ if page == "Projected Tree Inventory":
     # User input for B30
     user_input_b30 = st.number_input("How many new trees do you want to buy each year?", value=ws["B30"].value or 0)
 
-    st.write("### Modify Projected Inventory Using Vertical Sliders")
+    st.write("### Modify Projected Inventory Using Sliders")
 
     if "cell_modifications" not in st.session_state:
         st.session_state["cell_modifications"] = {}  # Stores modified values
 
-    # Apply CSS for vertical effect
-    st.markdown(
-        """
-        <style>
-        div[data-testid="stSlider"] {
-            writing-mode: bt-lr;
-            transform: rotate(270deg);
-            height: 200px;
-            padding: 10px;
-        }
-        </style>
-        """, unsafe_allow_html=True
-    )
-
-    # Create a grid layout for the vertical sliders
-    columns = st.columns(6)  # Display sliders in 6 columns for a clean UI
+    # Create a grid layout for the sliders
+    columns = st.columns(3)  # Display sliders in 3 columns for a clean UI
 
     for i, (cell, height) in enumerate(tree_heights.items()):
         slider_value = st.session_state["cell_modifications"].get(cell, ws[cell].value or 0)
 
         # Distribute sliders across columns
-        with columns[i % 6]:  
+        with columns[i % 3]:  
             new_value = st.slider(
-                label=f"{height} ft",
+                label=f"{height} ft Trees",
                 min_value=0,
-                max_value=500,  # Limited max input to 500 instead of 5000
+                max_value=500,  # Limit max input to 500
                 value=int(slider_value),
                 key=cell
             )
