@@ -118,8 +118,8 @@ if page == "Projected Tree Inventory":
         st.success("Excel file updated successfully!")
 
         # Display updated table
-        import ace_tools as tools
-        tools.display_dataframe_to_user(name="Updated Calculations", dataframe=df_calculations)
+        st.write("### Updated Calculations Table")
+        st.dataframe(df_calculations, hide_index=True)
 
         # Provide a download option for the updated Excel file
         st.download_button(
