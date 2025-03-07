@@ -50,7 +50,7 @@ else:
 st.sidebar.title("Navigation")
 st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-def project_tree_growth(data, years=10, new_trees_per_year=0):  # Now limited to 10 years
+def project_tree_growth(data, years=10, new_trees_per_year=0):
     projections = []
     for year in range(0, years + 1):
         year_data = data.copy()
@@ -74,8 +74,7 @@ def project_tree_growth(data, years=10, new_trees_per_year=0):  # Now limited to
 def create_summary(projection):
     projection["Tree Height (ft)"] = projection["Tree Height (ft)"].apply(lambda x: int(x))  # Bin tree heights to whole numbers
     summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
-    summary_melted = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().reset_index()  # For the plot
-    return summary, summary_melted
+    return summary
 
 if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"]):
     st.title("Projected Tree Inventory")
@@ -88,19 +87,26 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
 
     if st.button("Calculate"):
         projected_data = project_tree_growth(data, years=10, new_trees_per_year=st.session_state["new_trees"])
-        summary_data, summary_melted = create_summary(projected_data)
+        summary_data = create_summary(projected_data)
+
+        # User inputs for tree sales
+        st.subheader("Specify Number of Trees to Sell Each Year by Height")
+        heights = list(summary_data["Tree Height (ft)"])
+        sell_trees = {}
+
+        for height in heights:
+            sell_trees[height] = st.number_input(f"Sell trees at {height} ft each year:", min_value=0, value=0, step=10)
 
         # Create a limited version of summary_data (only rows 1-26)
         summary_data_limited = summary_data.iloc[1:27].copy()
-        
+
+        # Adjust `summary_data_limited` based on user-defined sales
+        for height, amount in sell_trees.items():
+            if height in summary_data_limited["Tree Height (ft)"].values:
+                summary_data_limited.loc[summary_data_limited["Tree Height (ft)"] == height, summary_data.columns[1:]] = \
+                    summary_data_limited.loc[summary_data_limited["Tree Height (ft)"] == height, summary_data.columns[1:]].apply(lambda x: x - amount).clip(lower=0)
+
         st.session_state["summary_data_limited"] = summary_data_limited
-        st.session_state["summary_melted"] = summary_melted
 
     if "summary_data_limited" in st.session_state:
         st.dataframe(st.session_state["summary_data_limited"])  # Display only rows 1-26
-
-        # Create a line plot using the melted summary data
-        fig = px.line(st.session_state["summary_melted"], x="Year", y="Count", color="Tree Height (ft)", 
-                      labels={"Year": "Year", "Count": "Tree Count", "Tree Height (ft)": "Tree Height (ft)"},
-                      title="Projected Tree Growth Over Time")
-        st.plotly_chart(fig)
