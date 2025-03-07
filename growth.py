@@ -69,12 +69,14 @@ def project_tree_growth_updated(data, years=20, new_trees_per_year=0, trees_sold
             "Count": [new_trees_per_year]
         })
 
+        # Ensure trees are removed correctly based on height
         for height, trees_sold in enumerate(trees_sold_per_height):
             height_filter = year_data["Tree Height (ft)"] == height
             available_trees = year_data.loc[height_filter, "Count"].sum()
             if available_trees > 0:
                 trees_to_remove = min(trees_sold, available_trees)
                 year_data.loc[height_filter, "Count"] -= trees_to_remove
+                year_data.loc[year_data["Count"] < 0, "Count"] = 0  # Prevent negative values
 
         year_data = pd.concat([year_data, new_trees], ignore_index=True)
         projections.append(year_data)
