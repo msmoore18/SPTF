@@ -52,38 +52,35 @@ page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree I
 
 def project_tree_growth(data, years=20, new_trees_per_year=0, trees_sold_per_year=0):
     projections = []
-    
-    # Create a copy of the dataset to modify year by year
+    previous_year_data = data.copy()  # Store previous year data
+
     for year in range(0, years + 1):
-        year_data = data.copy()
+        year_data = previous_year_data.copy()  # Start with last year's adjusted data
         year_data["Year"] = 2025 + year
-        year_data["Tree Height (ft)"] += year  # Grow trees 1ft per year
+        year_data["Tree Height (ft)"] += 1  # All trees grow by 1ft
 
-        # Adjust for trees sold
-        if year > 0:  # Start selling trees from year 1 (2025)
-            prev_year = projections[-1]
-            if 6 in prev_year["Tree Height (ft)"].values:
-                available_6ft_trees = prev_year.loc[prev_year["Tree Height (ft)"] == 6, "Count"].values[0]
-                trees_to_sell = min(trees_sold_per_year, available_6ft_trees)
+        # Reduce the count of 6ft trees for the year
+        if 6 in previous_year_data["Tree Height (ft)"].values:
+            available_6ft_trees = previous_year_data.loc[previous_year_data["Tree Height (ft)"] == 6, "Count"].values[0]
+            trees_to_sell = min(trees_sold_per_year, available_6ft_trees)
 
-                # Reduce the number of 6ft trees in the current year
-                year_data.loc[year_data["Tree Height (ft)"] == 6, "Count"] -= trees_to_sell
+            # Adjust the 6ft tree count before carrying over
+            year_data.loc[year_data["Tree Height (ft)"] == 7, "Count"] -= trees_to_sell  # Reduce 7ft count
+            year_data.loc[year_data["Tree Height (ft)"] == 7, "Count"] = year_data["Count"].clip(lower=0)
 
-                # Ensure non-negative count
-                year_data["Count"] = year_data["Count"].apply(lambda x: max(x, 0))
-
-        # Add new trees each year
+        # Add new 6-inch trees each year
         new_trees = pd.DataFrame({
-            "Tree Height (ft)": list(range(year + 1)),  # New trees start at 0ft and grow
-            "Year": [2025 + year] * (year + 1),
-            "Lot": ["N/A"] * (year + 1),
-            "Row": ["N/A"] * (year + 1),
-            "Quality": ["N/A"] * (year + 1),
-            "Count": [new_trees_per_year] * (year + 1)
+            "Tree Height (ft)": [0],  # New trees start at 0ft
+            "Year": [2025 + year],
+            "Lot": ["N/A"],
+            "Row": ["N/A"],
+            "Quality": ["N/A"],
+            "Count": [new_trees_per_year]
         })
 
         year_data = pd.concat([year_data, new_trees], ignore_index=True)
         projections.append(year_data)
+        previous_year_data = year_data  # Carry forward this year's adjusted data
 
     return pd.concat(projections)
 
