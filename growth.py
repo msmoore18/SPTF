@@ -135,13 +135,14 @@ if page == "Projected Tree Inventory":
         excel_modified.seek(0)
 
         # **Reload updated calculations (computed values, NOT formulas)**
-        updated_wb = openpyxl.load_workbook(excel_modified, data_only=True)  # <--- Fix here
+        updated_wb = openpyxl.load_workbook(excel_modified, data_only=True)  # Load computed values
         updated_ws = updated_wb["calculations"]
 
-        # Extract the A1:L28 range as a DataFrame (Now with computed values)
+        # Extract the A1:L28 range as a DataFrame
         data_range = []
         for row in updated_ws.iter_rows(min_row=1, max_row=28, min_col=1, max_col=12, values_only=True):
-            data_range.append(row)
+            row_data = [cell if cell is not None else 0 for cell in row]  # Replace None with 0
+            data_range.append(row_data)
         
         df_calculations = pd.DataFrame(data_range)
 
