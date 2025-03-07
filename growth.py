@@ -53,24 +53,17 @@ st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventor
 def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_per_year=0):
     projections = []
     height_distribution = {h: data[data["Tree Height (ft)"] == h]["Count"].sum() for h in range(1, 21)}
-
+    
     for year in range(0, years + 1):
         year_data = []
-        new_height_distribution = {}
-        
         for height in range(20, 0, -1):
             next_height = height + 1
             count = height_distribution.get(height, 0)
-            count = height_distribution.get(height - 1, 0) if height > 1 else 0
-
+            
             if height == 10 and year > 0:
                 count = max(0, height_distribution.get(9, 0))
             elif height >= 11 and year > 0:
-                count = height_distribution.get(9, 0)
-            elif height > 10 and year > 0:
                 count = max(0, height_distribution.get(height - 1, 0) - trees_sold_per_year)
-
-            new_height_distribution[height] = count
             
             year_data.append({
                 "Tree Height (ft)": height,
@@ -80,22 +73,19 @@ def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_per_yea
                 "Quality": "N/A",
                 "Count": count
             })
-
-        new_height_distribution[1] = new_trees_per_year
+        
         year_data.append({
             "Tree Height (ft)": 0,
-            "Tree Height (ft)": 1,
             "Year": 2025 + year,
             "Lot": "N/A",
             "Row": "N/A",
             "Quality": "N/A",
             "Count": new_trees_per_year
         })
-
+        
         height_distribution = {entry["Tree Height (ft)"]: entry["Count"] for entry in year_data}
-        height_distribution = new_height_distribution
         projections.extend(year_data)
-
+    
     return pd.DataFrame(projections)
 
 def create_summary(projection, years=10):
@@ -114,7 +104,7 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
 
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
     trees_sold_per_year = st.number_input("How many 10ft trees to sell per year?", min_value=0, step=1, value=st.session_state["trees_sold"])
-
+    
     st.session_state["new_trees"] = new_trees_per_year
     st.session_state["trees_sold"] = trees_sold_per_year
 
