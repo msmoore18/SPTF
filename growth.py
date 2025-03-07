@@ -53,11 +53,13 @@ st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventor
 def project_tree_inventory(data, years=20, new_trees_per_year=0, sell_trees={}):
     projections = []
     for year in range(0, years + 1):
-        year_data = data.copy()
-        year_data["Year"] = 2025 + year
-        
-        # Remove sold trees each year
-        if year > 0:
+        if year == 0:
+            year_data = data.copy()
+        else:
+            year_data = projections[-1].copy()
+            year_data["Year"] = 2025 + year
+            
+            # Remove sold trees cumulatively each year
             for height, count in sell_trees.items():
                 year_data.loc[year_data["Tree Height (ft)"] == height, "Count"] -= count
                 year_data["Count"] = year_data["Count"].clip(lower=0)
