@@ -92,4 +92,45 @@ def project_tree_growth(data, years=20, new_trees_per_year=0, trees_sold_per_yea
 def create_summary(projection):
     projection["Tree Height (ft)"] = projection["Tree Height (ft)"].astype(int)
     summary = projection.groupby(["Tree Height (ft)", "Year"])["Count"].sum().unstack(fill_value=0).reset_index()
-    summary_melted = projection.groupby(["Tree Height (ft)", "Year"])["Count"]
+    summary_melted = projection.groupby(["Tree Height (ft)", "Year"])["Count"].sum().reset_index()
+    return summary, summary_melted
+
+if page == "Projected Tree Inventory":
+    st.title("Projected Tree Inventory")
+
+    # Ensure session state variables exist
+    if "new_trees" not in st.session_state:
+        st.session_state["new_trees"] = 0
+    if "trees_sold" not in st.session_state:
+        st.session_state["trees_sold"] = 0
+
+    new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
+    trees_sold_per_year = st.number_input("How many 6ft trees to sell per year?", min_value=0, step=1, value=st.session_state["trees_sold"])
+
+    # Update session state only when necessary
+    if new_trees_per_year != st.session_state["new_trees"]:
+        st.session_state["new_trees"] = new_trees_per_year
+    if trees_sold_per_year != st.session_state["trees_sold"]:
+        st.session_state["trees_sold"] = trees_sold_per_year
+
+    if st.button("Calculate"):
+        projected_data = project_tree_growth(
+            data, years=20, new_trees_per_year=st.session_state["new_trees"], trees_sold_per_year=st.session_state["trees_sold"]
+        )
+        summary_data, summary_melted = create_summary(projected_data)
+
+        # Store results in session state
+        st.session_state["summary_data"] = summary_data
+        st.session_state["summary_melted"] = summary_melted
+
+    # Display results if available
+    if "summary_data" in st.session_state:
+        st.dataframe(st.session_state["summary_data"])
+
+        # Line chart visualization
+        fig = px.line(
+            st.session_state["summary_melted"], x="Year", y="Count", color="Tree Height (ft)", 
+            labels={"Year": "Year", "Count": "Tree Count", "Tree Height (ft)": "Tree Height (ft)"},
+            title="Projected Tree Growth Over Time (with Sales Impact)"
+        )
+        st.plotly_chart(fig)
