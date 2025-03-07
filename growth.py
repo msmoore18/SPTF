@@ -25,7 +25,7 @@ def load_data(password):
     except Exception:
         return None
 
-# Initialize session state variables if not set
+# Ensure session state variables exist
 if "password_input" not in st.session_state:
     st.session_state["password_input"] = ""
 
@@ -40,6 +40,7 @@ if "data" not in st.session_state:
                 st.session_state["password_error"] = True
             else:
                 st.session_state["data"] = data
+                st.session_state["password"] = password  # Store password in session
                 st.session_state["password_error"] = False
 
     # Initialize the error state
@@ -60,13 +61,14 @@ if "data" not in st.session_state:
     if st.session_state.get("password_error"):
         st.error("Incorrect password or file issue. Please try again.")
     elif "data" in st.session_state:
-        st.rerun()  # Now outside the callback, safe to call
+        st.rerun()
 
     st.stop()
 
 # Ensure data is available before proceeding
-if "data" in st.session_state:
+if "data" in st.session_state and "password" in st.session_state:
     xls = st.session_state["data"]
+    excel_password = st.session_state["password"]  # Retrieve stored password
 else:
     st.stop()
 
@@ -77,13 +79,13 @@ page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree I
 if page == "Projected Tree Inventory":
     st.title("Projected Tree Inventory")
 
-    # Load the "calculations" sheet
+    # Load the "calculations" sheet with decryption
     file_path = "SPTF_Count.xlsx"
     
     with open(file_path, "rb") as file:
         decrypted = io.BytesIO()
         office_file = msoffcrypto.OfficeFile(file)
-        office_file.load_key(st.session_state.password_input)
+        office_file.load_key(excel_password)  # Use stored password
         office_file.decrypt(decrypted)
     
     wb = openpyxl.load_workbook(decrypted, data_only=True)
