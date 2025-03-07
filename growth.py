@@ -91,33 +91,38 @@ if page == "Projected Tree Inventory":
     wb = openpyxl.load_workbook(decrypted, data_only=True)
     ws = wb["calculations"]
 
+    # Retrieve Tree Heights from Column N (N2:N28)
+    tree_heights = {f"O{row}": ws[f"N{row}"].value for row in range(2, 29)}
+
     # User input for B30
     user_input_b30 = st.number_input("How many new trees do you want to buy each year?", value=ws["B30"].value or 0)
 
-    # Dropdown to select a cell (O2:O28)
-    st.write("### Modify Projected Inventory (O2:O28)")
-    
+    # Dropdown to select a cell (O2:O28) with Tree Heights as labels
+    st.write("### Modify Projected Inventory by Tree Height")
+
     if "cell_modifications" not in st.session_state:
         st.session_state["cell_modifications"] = {}  # Stores modified values
 
     selected_cell = st.selectbox(
-        "Select a cell to modify:",
-        [f"O{row}" for row in range(2, 29)]
+        "Select a tree height to modify:",
+        options=list(tree_heights.keys()),
+        format_func=lambda cell: f"{tree_heights[cell]} ft" if tree_heights[cell] else cell
     )
 
-    # Input box to change selected cell
-    new_value = st.number_input(f"Enter new value for {selected_cell}:", value=ws[selected_cell].value or 0)
+    # Input box to change selected tree count
+    new_value = st.number_input(f"Enter new count for {tree_heights[selected_cell]} ft trees:", 
+                                value=ws[selected_cell].value or 0)
 
-    # Add modification to session state
+    # Save modification
     if st.button("Save Change"):
         st.session_state["cell_modifications"][selected_cell] = new_value
-        st.success(f"Saved {new_value} for {selected_cell}. Select another cell to continue modifying.")
+        st.success(f"Saved {new_value} trees for {tree_heights[selected_cell]} ft. Select another to modify.")
 
     # Button to apply all changes to Excel
     if st.button("Update Calculations"):
         ws["B30"].value = user_input_b30
 
-        # Apply all saved changes to selected cells
+        # Apply all saved changes to selected tree heights
         for cell, value in st.session_state["cell_modifications"].items():
             ws[cell].value = value
 
@@ -150,3 +155,16 @@ if page == "Projected Tree Inventory":
             file_name="Updated_SPTF_Count.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
+
+    # 📊 Bar Chart: Display user modifications as Tree Count vs Tree Height
+    if st.session_state["cell_modifications"]:
+        modified_data = {
+            "Tree Height (ft)": [tree_heights[cell] for cell in st.session_state["cell_modifications"].keys()],
+            "Tree Count": [count for count in st.session_state["cell_modifications"].values()]
+        }
+        
+        df_chart = pd.DataFrame(modified_data)
+        fig = px.bar(df_chart, x="Tree Height (ft)", y="Tree Count", title="Projected Tree Inventory", 
+                     labels={"Tree Count": "Number of Trees", "Tree Height (ft)": "Tree Height (ft)"})
+        
+        st.plotly_chart(fig)
