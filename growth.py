@@ -50,12 +50,17 @@ else:
 st.sidebar.title("Navigation")
 st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-def project_tree_growth(data, years=20, new_trees_per_year=0):
+def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_2025=0):
     projections = []
     for year in range(0, years + 1):
         year_data = data.copy()
         year_data["Year"] = 2025 + year
         year_data["Tree Height (ft)"] += year  # Grow all trees 1ft per year
+        
+        # Subtract sold 6ft trees in 2025
+        if year == 0:
+            year_data.loc[(year_data["Tree Height (ft)"] == 6), "Count"] -= trees_sold_2025
+            year_data["Count"] = year_data["Count"].clip(lower=0)  # Ensure no negative values
         
         # Add new trees each year, all starting at <1ft and growing annually
         new_trees = pd.DataFrame({
@@ -71,7 +76,7 @@ def project_tree_growth(data, years=20, new_trees_per_year=0):
         projections.append(year_data)
     return pd.concat(projections)
 
-def create_summary(projection, years=20):
+def create_summary(projection, years=10):
     projection["Tree Height (ft)"] = projection["Tree Height (ft)"].apply(lambda x: int(x))  # Bin tree heights to whole numbers
     summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
     summary_melted = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().reset_index()  # For the plot
@@ -82,12 +87,17 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
     
     if "new_trees" not in st.session_state:
         st.session_state["new_trees"] = 0
+    if "trees_sold_2025" not in st.session_state:
+        st.session_state["trees_sold_2025"] = 0
     
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
     st.session_state["new_trees"] = new_trees_per_year
     
+    trees_sold_2025 = st.slider("How many 6ft trees to sell in 2025?", min_value=0, max_value=1000, step=1, value=st.session_state["trees_sold_2025"])
+    st.session_state["trees_sold_2025"] = trees_sold_2025
+    
     if st.button("Calculate"):
-        projected_data = project_tree_growth(data, years=20, new_trees_per_year=st.session_state["new_trees"])
+        projected_data = project_tree_growth(data, years=10, new_trees_per_year=st.session_state["new_trees"], trees_sold_2025=st.session_state["trees_sold_2025"])
         summary_data, summary_melted = create_summary(projected_data)
         st.session_state["summary_data"] = summary_data
         st.session_state["summary_melted"] = summary_melted
