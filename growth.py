@@ -91,25 +91,34 @@ if page == "Projected Tree Inventory":
     wb = openpyxl.load_workbook(decrypted, data_only=True)
     ws = wb["calculations"]
 
-    # User input fields for B30 
+    # User input for B30
     user_input_b30 = st.number_input("How many new trees do you want to buy each year?", value=ws["B30"].value or 0)
 
-    # User input fields for O2:O28
-    user_inputs_o2_o28 = {}
-    st.write("### Enter values for O2 to O28:")
-    for row in range(2, 29):  # O2 to O28
-        cell_ref = f"O{row}"
-        user_inputs_o2_o28[cell_ref] = st.number_input(
-            f"Enter value for {cell_ref}",
-            value=ws[cell_ref].value or 0
-        )
+    # Dropdown to select a cell (O2:O28)
+    st.write("### Modify Projected Inventory (O2:O28)")
+    
+    if "cell_modifications" not in st.session_state:
+        st.session_state["cell_modifications"] = {}  # Stores modified values
 
+    selected_cell = st.selectbox(
+        "Select a cell to modify:",
+        [f"O{row}" for row in range(2, 29)]
+    )
+
+    # Input box to change selected cell
+    new_value = st.number_input(f"Enter new value for {selected_cell}:", value=ws[selected_cell].value or 0)
+
+    # Add modification to session state
+    if st.button("Save Change"):
+        st.session_state["cell_modifications"][selected_cell] = new_value
+        st.success(f"Saved {new_value} for {selected_cell}. Select another cell to continue modifying.")
+
+    # Button to apply all changes to Excel
     if st.button("Update Calculations"):
-        # Update values in the sheet
         ws["B30"].value = user_input_b30
-        
-        # Update values in O2:O28
-        for cell, value in user_inputs_o2_o28.items():
+
+        # Apply all saved changes to selected cells
+        for cell, value in st.session_state["cell_modifications"].items():
             ws[cell].value = value
 
         # Save the updated file
