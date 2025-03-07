@@ -107,7 +107,6 @@ if page == "Projected Tree Inventory":
     if st.button("Update Calculations"):
         # Update values in the sheet
         ws["B30"].value = user_input_b30
-        ws["O12"].value = user_input_o12
         
         # Update values in O2:O28
         for cell, value in user_inputs_o2_o28.items():
