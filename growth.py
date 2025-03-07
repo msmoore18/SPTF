@@ -50,46 +50,27 @@ else:
 st.sidebar.title("Navigation")
 st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_per_year=0):
+def project_tree_inventory(data, years=20, new_trees_per_year=0):
     projections = []
-    height_distribution = {h: data[data["Tree Height (ft)"] == h]["Count"].sum() for h in range(1, 21)}
-    
     for year in range(0, years + 1):
-        year_data = []
-        for height in range(20, 0, -1):
-            next_height = height + 1
-            count = height_distribution.get(height, 0)
-            
-            if height == 10 and year > 0:
-                count = max(0, height_distribution.get(9, 0))
-            elif height >= 11 and year > 0:
-                count = max(0, height_distribution.get(height - 1, 0) - trees_sold_per_year)
-            
-            year_data.append({
-                "Tree Height (ft)": height,
-                "Year": 2025 + year,
-                "Lot": "N/A",
-                "Row": "N/A",
-                "Quality": "N/A",
-                "Count": count
-            })
+        year_data = data.copy()
+        year_data["Year"] = 2025 + year
         
-        year_data.append({
-            "Tree Height (ft)": 0,
-            "Year": 2025 + year,
-            "Lot": "N/A",
-            "Row": "N/A",
-            "Quality": "N/A",
-            "Count": new_trees_per_year
+        # Add new trees each year with a fixed height
+        new_trees = pd.DataFrame({
+            "Tree Height (ft)": [0.5] * new_trees_per_year,  # Fixed height of 6 inches
+            "Year": [2025 + year] * new_trees_per_year,
+            "Lot": ["N/A"] * new_trees_per_year,
+            "Row": ["N/A"] * new_trees_per_year,
+            "Quality": ["N/A"] * new_trees_per_year,
+            "Count": [1] * new_trees_per_year
         })
-        
-        height_distribution = {entry["Tree Height (ft)"]: entry["Count"] for entry in year_data}
-        projections.extend(year_data)
-    
-    return pd.DataFrame(projections)
 
-def create_summary(projection, years=10):
-    projection["Tree Height (ft)"] = projection["Tree Height (ft)"].apply(lambda x: int(x))
+        year_data = pd.concat([year_data, new_trees], ignore_index=True)
+        projections.append(year_data)
+    return pd.concat(projections)
+
+def create_summary(projection):
     summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
     summary_melted = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().reset_index()
     return summary, summary_melted
@@ -99,25 +80,20 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
 
     if "new_trees" not in st.session_state:
         st.session_state["new_trees"] = 0
-    if "trees_sold" not in st.session_state:
-        st.session_state["trees_sold"] = 0
 
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
-    trees_sold_per_year = st.number_input("How many 10ft trees to sell per year?", min_value=0, step=1, value=st.session_state["trees_sold"])
-    
     st.session_state["new_trees"] = new_trees_per_year
-    st.session_state["trees_sold"] = trees_sold_per_year
 
     if st.button("Calculate"):
-        projected_data = project_tree_growth(data, years=10, new_trees_per_year=new_trees_per_year, trees_sold_per_year=trees_sold_per_year)
+        projected_data = project_tree_inventory(data, years=20, new_trees_per_year=st.session_state["new_trees"])
         summary_data, summary_melted = create_summary(projected_data)
         st.session_state["summary_data"] = summary_data
         st.session_state["summary_melted"] = summary_melted
 
     if "summary_data" in st.session_state:
         st.dataframe(st.session_state["summary_data"])
-
+        
         fig = px.line(st.session_state["summary_melted"], x="Year", y="Count", color="Tree Height (ft)", 
                       labels={"Year": "Year", "Count": "Tree Count", "Tree Height (ft)": "Tree Height (ft)"},
-                      title="Projected Tree Growth Over Time")
+                      title="Projected Tree Inventory Over Time")
         st.plotly_chart(fig)
