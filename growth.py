@@ -88,7 +88,7 @@ if page == "Projected Tree Inventory":
         office_file.load_key(excel_password)  # Use stored password
         office_file.decrypt(decrypted)
     
-    wb = openpyxl.load_workbook(decrypted, data_only=False)  # Ensure formulas update
+    wb = openpyxl.load_workbook(decrypted, data_only=False)  # Load raw formulas first
     ws = wb["calculations"]
 
     # Retrieve Tree Heights from Column N (N2:N28)
@@ -128,18 +128,17 @@ if page == "Projected Tree Inventory":
         # Apply all saved changes to selected tree heights
         for cell, value in st.session_state["cell_modifications"].items():
             ws[cell].value = value
-            print(f"Updating {cell} to {value}")  # Debugging output
 
         # Save the updated file
         excel_modified = io.BytesIO()
         wb.save(excel_modified)
         excel_modified.seek(0)
 
-        # Reload updated calculations
-        updated_wb = openpyxl.load_workbook(excel_modified, data_only=False)  # Ensure formulas update
+        # **Reload updated calculations (computed values, NOT formulas)**
+        updated_wb = openpyxl.load_workbook(excel_modified, data_only=True)  # <--- Fix here
         updated_ws = updated_wb["calculations"]
 
-        # Extract the A1:L28 range as a DataFrame
+        # Extract the A1:L28 range as a DataFrame (Now with computed values)
         data_range = []
         for row in updated_ws.iter_rows(min_row=1, max_row=28, min_col=1, max_col=12, values_only=True):
             data_range.append(row)
@@ -148,7 +147,7 @@ if page == "Projected Tree Inventory":
 
         st.success("Excel file updated successfully!")
 
-        # Display updated table without first row
+        # Display updated table with computed values
         st.write("### Updated Calculations Table")
         st.dataframe(df_calculations.iloc[1:], hide_index=True)
 
