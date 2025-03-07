@@ -55,21 +55,20 @@ def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_2025=0)
     for year in range(0, years + 1):
         if year == 0:
             year_data = data.copy()
-        else:
-            year_data = projections[-1].copy()
-            year_data["Year"] = 2025 + year
-            year_data["Tree Height (ft)"] += 1  # Continue 1ft growth per year
-        
-        # Apply sales reduction in 2025
-        if year == 0:
+            # Apply sales reduction in 2025
             max_salable_trees = year_data.loc[year_data["Tree Height (ft)"] == 6, "Count"].sum()
             trees_sold_2025 = min(trees_sold_2025, max_salable_trees, 500)  # Limit to available trees and max of 500
             year_data.loc[year_data["Tree Height (ft)"] == 6, "Count"] -= trees_sold_2025
             year_data["Count"] = year_data["Count"].clip(lower=0)
+        else:
+            previous_year_data = projections[-1].copy()
+            previous_year_data["Tree Height (ft)"] += 1  # Continue 1ft growth per year
+            year_data = previous_year_data.copy()
+            year_data["Year"] = 2025 + year
         
         # Add new trees each year
         new_trees = pd.DataFrame({
-            "Tree Height (ft)": [y for y in range(year + 1)],
+            "Tree Height (ft)": [0 + y for y in range(year + 1)],
             "Year": [2025 + year] * (year + 1),
             "Lot": ["N/A"] * (year + 1),
             "Row": ["N/A"] * (year + 1),
