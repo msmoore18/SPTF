@@ -121,4 +121,4 @@ if page == "Projected Tree Inventory":
         st.write("### Updated Calculations Table")
         st.dataframe(df_calculations.iloc[1:], hide_index=True)
 
-        )
+
