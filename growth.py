@@ -121,4 +121,3 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
                       labels={"Year": "Year", "Count": "Tree Count", "Tree Height (ft)": "Tree Height (ft)"},
                       title="Projected Tree Growth Over Time")
         st.plotly_chart(fig)
-
