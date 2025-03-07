@@ -56,18 +56,14 @@ def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_per_yea
     
     for year in range(0, years + 1):
         year_data = []
-        new_height_distribution = {}
-        
         for height in range(20, 0, -1):
-            count = height_distribution.get(height - 1, 0) if height > 1 else 0
+            next_height = height + 1
+            count = height_distribution.get(height, 0)
             
             if height == 10 and year > 0:
-                count = height_distribution.get(9, 0)
-                count = max(0, count - trees_sold_per_year)  # Subtract sold 10ft trees only once
-            elif height > 10 and year > 0:
-                count = height_distribution.get(height - 1, 0)  # Preserve growth without reducing further
-            
-            new_height_distribution[height] = count
+                count = max(0, height_distribution.get(10, 0) - trees_sold_per_year)
+            elif height >= 11 and year > 0:
+                count = max(0, height_distribution.get(height - 1, 0))
             
             year_data.append({
                 "Tree Height (ft)": height,
@@ -78,9 +74,8 @@ def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_per_yea
                 "Count": count
             })
         
-        new_height_distribution[1] = new_trees_per_year
         year_data.append({
-            "Tree Height (ft)": 1,
+            "Tree Height (ft)": 0,
             "Year": 2025 + year,
             "Lot": "N/A",
             "Row": "N/A",
@@ -88,7 +83,7 @@ def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_per_yea
             "Count": new_trees_per_year
         })
         
-        height_distribution = new_height_distribution
+        height_distribution = {entry["Tree Height (ft)"]: entry["Count"] for entry in year_data}
         projections.extend(year_data)
     
     return pd.DataFrame(projections)
@@ -126,3 +121,4 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
                       labels={"Year": "Year", "Count": "Tree Count", "Tree Height (ft)": "Tree Height (ft)"},
                       title="Projected Tree Growth Over Time")
         st.plotly_chart(fig)
+
