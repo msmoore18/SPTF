@@ -157,14 +157,19 @@ if page == "Projected Tree Inventory":
         )
 
     # 📊 Bar Chart: Display user modifications as Tree Count vs Tree Height
-    if st.session_state["cell_modifications"]:
-        modified_data = {
-            "Tree Height (ft)": [tree_heights[cell] for cell in st.session_state["cell_modifications"].keys()],
-            "Tree Count": [count for count in st.session_state["cell_modifications"].values()]
-        }
-        
-        df_chart = pd.DataFrame(modified_data)
+    # Ensure all tree heights are displayed, even if unmodified
+    all_tree_counts = {
+        height: (st.session_state["cell_modifications"].get(cell, ws[cell].value) or 0)
+        for cell, height in tree_heights.items()
+    }
+
+    df_chart = pd.DataFrame({
+        "Tree Height (ft)": list(all_tree_counts.keys()),
+        "Tree Count": list(all_tree_counts.values())
+    })
+
+    # Display chart only if there are values
+    if not df_chart.empty:
         fig = px.bar(df_chart, x="Tree Height (ft)", y="Tree Count", title="Projected Tree Inventory", 
                      labels={"Tree Count": "Number of Trees", "Tree Height (ft)": "Tree Height (ft)"})
-        
         st.plotly_chart(fig)
