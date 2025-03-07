@@ -119,12 +119,6 @@ if page == "Projected Tree Inventory":
 
         # Display updated table
         st.write("### Updated Calculations Table")
-        st.dataframe(df_calculations, hide_index=True)
+        st.dataframe(df_calculations.iloc[1:], hide_index=True)
 
-        # Provide a download option for the updated Excel file
-        st.download_button(
-            label="Download Updated Excel",
-            data=excel_modified,
-            file_name="Updated_SPTF_Count.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
