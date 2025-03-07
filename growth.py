@@ -59,14 +59,16 @@ def project_tree_growth(data, years=20, new_trees_per_year=0, trees_sold_per_yea
         year_data["Year"] = 2025 + year
         year_data["Tree Height (ft)"] += 1  # All trees grow by 1ft
 
-        # Reduce the count of 6ft trees for the year
-        if 6 in previous_year_data["Tree Height (ft)"].values:
+        # Reduce the count of 6ft trees for the year before carrying over to 7ft
+        if (year > 0) and (6 in previous_year_data["Tree Height (ft)"].values):
             available_6ft_trees = previous_year_data.loc[previous_year_data["Tree Height (ft)"] == 6, "Count"].values[0]
             trees_to_sell = min(trees_sold_per_year, available_6ft_trees)
 
-            # Adjust the 6ft tree count before carrying over
-            year_data.loc[year_data["Tree Height (ft)"] == 7, "Count"] -= trees_to_sell  # Reduce 7ft count
-            year_data.loc[year_data["Tree Height (ft)"] == 7, "Count"] = year_data["Count"].clip(lower=0)
+            # Reduce the number of 6ft trees before they become 7ft trees
+            previous_year_data.loc[previous_year_data["Tree Height (ft)"] == 6, "Count"] -= trees_to_sell
+
+            # Ensure non-negative count
+            previous_year_data["Count"] = previous_year_data["Count"].clip(lower=0)
 
         # Add new 6-inch trees each year
         new_trees = pd.DataFrame({
