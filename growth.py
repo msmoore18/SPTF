@@ -59,7 +59,7 @@ def project_tree_inventory(data, years=20, new_trees_per_year=0, sell_trees={}):
         # Remove sold trees each year
         if year > 0:
             for height, count in sell_trees.items():
-                year_data.loc[year_data["Tree Height (ft)"] == height, "Count"] -= count * year
+                year_data.loc[year_data["Tree Height (ft)"] == height, "Count"] -= count
                 year_data["Count"] = year_data["Count"].clip(lower=0)
         
         # Add new trees each year with a fixed height
