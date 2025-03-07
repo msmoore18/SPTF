@@ -50,10 +50,10 @@ else:
 st.sidebar.title("Navigation")
 st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-def project_tree_growth_updated(data, years=20, new_trees_per_year=0, trees_sold_per_year=None):
+def project_tree_growth_updated(data, years=20, new_trees_per_year=0, trees_sold_per_height=None):
     projections = []
-    if trees_sold_per_year is None:
-        trees_sold_per_year = [0] * (years + 1)
+    if trees_sold_per_height is None:
+        trees_sold_per_height = [0] * 26  # Default to no sales for 26 height levels
 
     for year in range(0, years + 1):
         year_data = data.copy()
@@ -69,17 +69,12 @@ def project_tree_growth_updated(data, years=20, new_trees_per_year=0, trees_sold
             "Count": [new_trees_per_year]
         })
 
-        if year < len(trees_sold_per_year):
-            trees_sold = trees_sold_per_year[year]
-            for height in sorted(year_data["Tree Height (ft)"].unique(), reverse=True):
-                height_filter = year_data["Tree Height (ft)"] == height
-                available_trees = year_data.loc[height_filter, "Count"].sum()
-                if available_trees > 0:
-                    trees_to_remove = min(trees_sold, available_trees)
-                    year_data.loc[height_filter, "Count"] -= trees_to_remove
-                    trees_sold -= trees_to_remove
-                    if trees_sold <= 0:
-                        break
+        for height, trees_sold in enumerate(trees_sold_per_height):
+            height_filter = year_data["Tree Height (ft)"] == height
+            available_trees = year_data.loc[height_filter, "Count"].sum()
+            if available_trees > 0:
+                trees_to_remove = min(trees_sold, available_trees)
+                year_data.loc[height_filter, "Count"] -= trees_to_remove
 
         year_data = pd.concat([year_data, new_trees], ignore_index=True)
         projections.append(year_data)
@@ -101,15 +96,14 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
     st.session_state["new_trees"] = new_trees_per_year
 
-    trees_sold_per_year = []
-    st.subheader("Enter Number of Trees to Sell Each Year")
-    for i in range(26):
-        year = 2025 + i
-        trees_sold = st.number_input(f"Year {year}", min_value=0, step=1, key=f"trees_sold_{year}")
-        trees_sold_per_year.append(trees_sold)
+    trees_sold_per_height = []
+    st.subheader("Enter Number of Trees to Sell Per Tree Height")
+    for height in range(26):
+        trees_sold = st.number_input(f"Tree Height {height}", min_value=0, step=1, key=f"trees_sold_{height}")
+        trees_sold_per_height.append(trees_sold)
 
     if st.button("Calculate"):
-        projected_data = project_tree_growth_updated(data, years=10, new_trees_per_year=st.session_state["new_trees"], trees_sold_per_year=trees_sold_per_year)
+        projected_data = project_tree_growth_updated(data, years=10, new_trees_per_year=st.session_state["new_trees"], trees_sold_per_height=trees_sold_per_height)
         summary_data, summary_melted = create_summary(projected_data)
         st.session_state["summary_data"] = summary_data
         st.session_state["summary_melted"] = summary_melted
