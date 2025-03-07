@@ -101,7 +101,12 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
     st.session_state["new_trees"] = new_trees_per_year
 
-    trees_sold_per_year = [0, 0, 0, 583, 990]  # Example from O5:O30, replace dynamically if needed
+    trees_sold_per_year = []
+    st.subheader("Enter Number of Trees to Sell Each Year")
+    for i in range(26):
+        year = 2025 + i
+        trees_sold = st.number_input(f"Year {year}", min_value=0, step=1, key=f"trees_sold_{year}")
+        trees_sold_per_year.append(trees_sold)
 
     if st.button("Calculate"):
         projected_data = project_tree_growth_updated(data, years=10, new_trees_per_year=st.session_state["new_trees"], trees_sold_per_year=trees_sold_per_year)
