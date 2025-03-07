@@ -53,28 +53,23 @@ st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventor
 def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_2025=0):
     projections = []
     for year in range(0, years + 1):
-        year_data = data.copy()
-        year_data["Year"] = 2025 + year
-        year_data["Tree Height (ft)"] += year  # Grow all trees 1ft per year
-        
-        # Determine available 6ft trees in 2025
         if year == 0:
-            max_salable_trees = year_data.loc[year_data["Tree Height (ft)"] == 6, "Count"].sum()
-            trees_sold_2025 = min(trees_sold_2025, max_salable_trees)  # Limit to available trees
-            year_data.loc[(year_data["Tree Height (ft)"] == 6), "Count"] -= trees_sold_2025
-            year_data["Count"] = year_data["Count"].clip(lower=0)  # Ensure no negative values
-        
-        # Propagate the impact of sold trees to future years
-        if year > 0:
-            previous_year_data = projections[-1]
-            year_data = previous_year_data.copy()
+            year_data = data.copy()
+        else:
+            year_data = projections[-1].copy()
             year_data["Year"] = 2025 + year
             year_data["Tree Height (ft)"] += 1  # Continue 1ft growth per year
-            year_data["Count"] = previous_year_data["Count"]  # Carry forward tree counts
         
-        # Add new trees each year, all starting at <1ft and growing annually
+        # Apply sales reduction in 2025
+        if year == 0:
+            max_salable_trees = year_data.loc[year_data["Tree Height (ft)"] == 6, "Count"].sum()
+            trees_sold_2025 = min(trees_sold_2025, max_salable_trees, 500)  # Limit to available trees and max of 500
+            year_data.loc[year_data["Tree Height (ft)"] == 6, "Count"] -= trees_sold_2025
+            year_data["Count"] = year_data["Count"].clip(lower=0)
+        
+        # Add new trees each year
         new_trees = pd.DataFrame({
-            "Tree Height (ft)": [0 + y for y in range(year + 1)],  # Trees added every year and grow
+            "Tree Height (ft)": [y for y in range(year + 1)],
             "Year": [2025 + year] * (year + 1),
             "Lot": ["N/A"] * (year + 1),
             "Row": ["N/A"] * (year + 1),
@@ -100,11 +95,10 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
     if "trees_sold_2025" not in st.session_state:
         st.session_state["trees_sold_2025"] = 0
     
-    max_salable_trees = data.loc[data["Tree Height (ft)"] == 6, "Count"].sum()
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
     st.session_state["new_trees"] = new_trees_per_year
     
-    trees_sold_2025 = st.slider("How many 6ft trees to sell in 2025?", min_value=0, max_value=max_salable_trees, step=1, value=min(st.session_state["trees_sold_2025"], max_salable_trees))
+    trees_sold_2025 = st.slider("How many 6ft trees to sell in 2025?", min_value=0, max_value=500, step=1, value=min(st.session_state["trees_sold_2025"], 500))
     st.session_state["trees_sold_2025"] = trees_sold_2025
     
     if st.button("Calculate"):
