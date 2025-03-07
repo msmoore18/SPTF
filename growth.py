@@ -50,11 +50,17 @@ else:
 st.sidebar.title("Navigation")
 st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-def project_tree_inventory(data, years=20, new_trees_per_year=0):
+def project_tree_inventory(data, years=20, new_trees_per_year=0, sell_trees={}):
     projections = []
     for year in range(0, years + 1):
         year_data = data.copy()
         year_data["Year"] = 2025 + year
+        
+        # Remove sold trees each year
+        if year > 0:
+            for height, count in sell_trees.items():
+                year_data.loc[year_data["Tree Height (ft)"] == height, "Count"] -= count * year
+                year_data["Count"] = year_data["Count"].clip(lower=0)
         
         # Add new trees each year with a fixed height
         new_trees = pd.DataFrame({
@@ -83,9 +89,14 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
 
     new_trees_per_year = st.number_input("How many 6-inch trees to add per year?", min_value=0, step=1, value=st.session_state["new_trees"])
     st.session_state["new_trees"] = new_trees_per_year
-
+    
+    st.write("Enter the number of trees to sell each year by height:")
+    sell_trees = {}
+    for height in sorted(data["Tree Height (ft)"].unique()):
+        sell_trees[height] = st.number_input(f"Sell {int(height)} ft trees per year:", min_value=0, step=1, value=0)
+    
     if st.button("Calculate"):
-        projected_data = project_tree_inventory(data, years=20, new_trees_per_year=st.session_state["new_trees"])
+        projected_data = project_tree_inventory(data, years=20, new_trees_per_year=st.session_state["new_trees"], sell_trees=sell_trees)
         summary_data, summary_melted = create_summary(projected_data)
         st.session_state["summary_data"] = summary_data
         st.session_state["summary_melted"] = summary_melted
@@ -97,3 +108,4 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
                       labels={"Year": "Year", "Count": "Tree Count", "Tree Height (ft)": "Tree Height (ft)"},
                       title="Projected Tree Inventory Over Time")
         st.plotly_chart(fig)
+
