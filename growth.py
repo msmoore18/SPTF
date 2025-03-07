@@ -91,13 +91,27 @@ if page == "Projected Tree Inventory":
     wb = openpyxl.load_workbook(decrypted, data_only=True)
     ws = wb["calculations"]
 
-    # User input fields for B30 and O12
-    user_input_b30 = st.number_input("Enter value for B30", value=ws["B30"].value or 0)
-    user_input_o12 = st.number_input("Enter value for O12", value=ws["O12"].value or 0)
+    # User input fields for B30 
+    user_input_b30 = st.number_input("How many new trees do you want to buy each year?", value=ws["B30"].value or 0)
+
+    # User input fields for O2:O28
+    user_inputs_o2_o28 = {}
+    st.write("### Enter values for O2 to O28:")
+    for row in range(2, 29):  # O2 to O28
+        cell_ref = f"O{row}"
+        user_inputs_o2_o28[cell_ref] = st.number_input(
+            f"Enter value for {cell_ref}",
+            value=ws[cell_ref].value or 0
+        )
 
     if st.button("Update Calculations"):
+        # Update values in the sheet
         ws["B30"].value = user_input_b30
         ws["O12"].value = user_input_o12
+        
+        # Update values in O2:O28
+        for cell, value in user_inputs_o2_o28.items():
+            ws[cell].value = value
 
         # Save the updated file
         excel_modified = io.BytesIO()
@@ -117,8 +131,14 @@ if page == "Projected Tree Inventory":
 
         st.success("Excel file updated successfully!")
 
-        # Display updated table
+        # Display updated table without first row
         st.write("### Updated Calculations Table")
         st.dataframe(df_calculations.iloc[1:], hide_index=True)
 
-
+        # Provide a download option for the updated Excel file
+        st.download_button(
+            label="Download Updated Excel",
+            data=excel_modified,
+            file_name="Updated_SPTF_Count.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
