@@ -88,7 +88,7 @@ if page == "Projected Tree Inventory":
         office_file.load_key(excel_password)  # Use stored password
         office_file.decrypt(decrypted)
     
-    wb = openpyxl.load_workbook(decrypted, data_only=True)
+    wb = openpyxl.load_workbook(decrypted, data_only=False)  # Ensure formulas update
     ws = wb["calculations"]
 
     # Retrieve Tree Heights from Column N (N2:N28)
@@ -128,6 +128,7 @@ if page == "Projected Tree Inventory":
         # Apply all saved changes to selected tree heights
         for cell, value in st.session_state["cell_modifications"].items():
             ws[cell].value = value
+            print(f"Updating {cell} to {value}")  # Debugging output
 
         # Save the updated file
         excel_modified = io.BytesIO()
@@ -135,7 +136,7 @@ if page == "Projected Tree Inventory":
         excel_modified.seek(0)
 
         # Reload updated calculations
-        updated_wb = openpyxl.load_workbook(excel_modified, data_only=True)
+        updated_wb = openpyxl.load_workbook(excel_modified, data_only=False)  # Ensure formulas update
         updated_ws = updated_wb["calculations"]
 
         # Extract the A1:L28 range as a DataFrame
