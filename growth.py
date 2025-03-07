@@ -25,6 +25,9 @@ def load_data(password):
     except Exception:
         return None
 
+if "password_input" not in st.session_state:
+    st.session_state["password_input"] = ""
+
 # User enters password
 if "data" not in st.session_state:
     st.title("Enter Password to Access Data")
