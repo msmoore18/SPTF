@@ -63,8 +63,9 @@ def project_tree_growth(data, years=10, new_trees_per_year=0, trees_sold_per_yea
             
             if height == 10 and year > 0:
                 count = height_distribution.get(9, 0)
+                count = max(0, count - trees_sold_per_year)  # Subtract sold 10ft trees only once
             elif height > 10 and year > 0:
-                count = max(0, height_distribution.get(height - 1, 0) - trees_sold_per_year)
+                count = height_distribution.get(height - 1, 0)  # Preserve growth without reducing further
             
             new_height_distribution[height] = count
             
@@ -125,4 +126,3 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
                       labels={"Year": "Year", "Count": "Tree Count", "Tree Height (ft)": "Tree Height (ft)"},
                       title="Projected Tree Growth Over Time")
         st.plotly_chart(fig)
-
