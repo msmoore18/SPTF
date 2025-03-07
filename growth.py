@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
-import openpyxl
-import io
+import plotly.express as px
 import msoffcrypto
+import io
+import openpyxl
 
 # Streamlit page configuration
 st.set_page_config(layout="wide")
@@ -74,35 +75,51 @@ if page == "Projected Tree Inventory":
     st.title("Projected Tree Inventory")
 
     # Load the "calculations" sheet
-    with pd.ExcelWriter("SPTF_Count.xlsx", engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
-        wb = writer.book
-        ws = wb["calculations"]
+    file_path = "SPTF_Count.xlsx"
+    
+    with open(file_path, "rb") as file:
+        decrypted = io.BytesIO()
+        office_file = msoffcrypto.OfficeFile(file)
+        office_file.load_key(st.session_state.password_input)
+        office_file.decrypt(decrypted)
+    
+    wb = openpyxl.load_workbook(decrypted, data_only=True)
+    ws = wb["calculations"]
 
-        # Get user input
-        user_input_b30 = st.number_input("Enter value for B30", value=ws["B30"].value or 0)
-        user_input_o12 = st.number_input("Enter value for O12", value=ws["O12"].value or 0)
+    # User input fields for B30 and O12
+    user_input_b30 = st.number_input("Enter value for B30", value=ws["B30"].value or 0)
+    user_input_o12 = st.number_input("Enter value for O12", value=ws["O12"].value or 0)
 
-        # Update values in the sheet
+    if st.button("Update Calculations"):
         ws["B30"].value = user_input_b30
         ws["O12"].value = user_input_o12
 
-        # Save updated workbook
+        # Save the updated file
         excel_modified = io.BytesIO()
         wb.save(excel_modified)
         excel_modified.seek(0)
 
-        # Load updated values
-        df_calculations = pd.read_excel(excel_modified, sheet_name="calculations", usecols="A:L", nrows=28)
+        # Reload updated calculations
+        updated_wb = openpyxl.load_workbook(excel_modified, data_only=True)
+        updated_ws = updated_wb["calculations"]
 
-    # Display updated data
-    st.write("### Updated Calculations Table")
-    import ace_tools as tools
-    tools.display_dataframe_to_user(name="Updated Calculations", dataframe=df_calculations)
+        # Extract the A1:L28 range as a DataFrame
+        data_range = []
+        for row in updated_ws.iter_rows(min_row=1, max_row=28, min_col=1, max_col=12, values_only=True):
+            data_range.append(row)
+        
+        df_calculations = pd.DataFrame(data_range)
 
-    # Provide download option
-    st.download_button(
-        label="Download Updated Excel",
-        data=excel_modified,
-        file_name="Updated_SPTF_Count.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+        st.success("Excel file updated successfully!")
+
+        # Display updated table
+        import ace_tools as tools
+        tools.display_dataframe_to_user(name="Updated Calculations", dataframe=df_calculations)
+
+        # Provide a download option for the updated Excel file
+        st.download_button(
+            label="Download Updated Excel",
+            data=excel_modified,
+            file_name="Updated_SPTF_Count.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
