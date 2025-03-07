@@ -50,7 +50,7 @@ else:
 st.sidebar.title("Navigation")
 st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-def project_tree_growth(data, years=20, new_trees_per_year=0):
+def project_tree_growth(data, years=10, new_trees_per_year=0):
     projections = []
     for year in range(0, years + 1):
         year_data = data.copy()
@@ -71,7 +71,7 @@ def project_tree_growth(data, years=20, new_trees_per_year=0):
         projections.append(year_data)
     return pd.concat(projections)
 
-def create_summary(projection, years=20):
+def create_summary(projection, years=10):
     projection["Tree Height (ft)"] = projection["Tree Height (ft)"].apply(lambda x: int(x))  # Bin tree heights to whole numbers
     summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
     summary_melted = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().reset_index()  # For the plot
