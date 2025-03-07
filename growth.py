@@ -97,26 +97,29 @@ if page == "Projected Tree Inventory":
     # User input for B30
     user_input_b30 = st.number_input("How many new trees do you want to buy each year?", value=ws["B30"].value or 0)
 
-    # Dropdown to select a cell (O2:O28) with Tree Heights as labels
-    st.write("### Modify Projected Inventory by Tree Height")
-
+    st.write("### Modify Projected Inventory Using Sliders")
+    
     if "cell_modifications" not in st.session_state:
         st.session_state["cell_modifications"] = {}  # Stores modified values
 
-    selected_cell = st.selectbox(
-        "Select a tree height to modify:",
-        options=list(tree_heights.keys()),
-        format_func=lambda cell: f"{tree_heights[cell]} ft" if tree_heights[cell] else cell
-    )
+    # Create vertical sliders for each Tree Height
+    col1, col2, col3 = st.columns(3)  # Arrange sliders in three columns for better UI
 
-    # Input box to change selected tree count
-    new_value = st.number_input(f"Enter new count for {tree_heights[selected_cell]} ft trees:", 
-                                value=ws[selected_cell].value or 0)
+    for i, (cell, height) in enumerate(tree_heights.items()):
+        slider_value = st.session_state["cell_modifications"].get(cell, ws[cell].value or 0)
 
-    # Save modification
-    if st.button("Save Change"):
-        st.session_state["cell_modifications"][selected_cell] = new_value
-        st.success(f"Saved {new_value} trees for {tree_heights[selected_cell]} ft. Select another to modify.")
+        # Distribute sliders across columns
+        with [col1, col2, col3][i % 3]:  
+            new_value = st.slider(
+                label=f"{height} ft Trees",
+                min_value=0,
+                max_value=5000,  # Adjust max based on realistic values
+                value=int(slider_value),
+                key=cell
+            )
+        
+        # Store modified values in session state
+        st.session_state["cell_modifications"][cell] = new_value
 
     # Button to apply all changes to Excel
     if st.button("Update Calculations"):
@@ -157,9 +160,8 @@ if page == "Projected Tree Inventory":
         )
 
     # 📊 Bar Chart: Display user modifications as Tree Count vs Tree Height
-    # Ensure all tree heights are displayed, even if unmodified
     all_tree_counts = {
-        height: (st.session_state["cell_modifications"].get(cell, ws[cell].value) or 0)
+        height: st.session_state["cell_modifications"].get(cell, ws[cell].value) or 0
         for cell, height in tree_heights.items()
     }
 
@@ -168,8 +170,7 @@ if page == "Projected Tree Inventory":
         "Tree Count": list(all_tree_counts.values())
     })
 
-    # Display chart only if there are values
     if not df_chart.empty:
-        fig = px.bar(df_chart, x="Tree Height (ft)", y="Tree Count", title="Projected Tree Inventory", 
+        fig = px.bar(df_chart, x="Tree Height (ft)", y="Tree Count", title="Projected Tree Inventory",
                      labels={"Tree Count": "Number of Trees", "Tree Height (ft)": "Tree Height (ft)"})
         st.plotly_chart(fig)
