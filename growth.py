@@ -93,7 +93,7 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
     st.write("Enter the number of trees to sell each year by height:")
     sell_trees = {}
     for height in sorted(data["Tree Height (ft)"].unique()):
-        sell_trees[height] = st.number_input(f"Sell {int(height)} ft trees per year:", min_value=0, step=1, value=0)
+        sell_trees[height] = st.number_input(f"Sell {int(height)} ft trees per year:", min_value=0, step=1, value=0, key=f"sell_{height}")
     
     if st.button("Calculate"):
         projected_data = project_tree_inventory(data, years=20, new_trees_per_year=st.session_state["new_trees"], sell_trees=sell_trees)
@@ -108,4 +108,3 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
                       labels={"Year": "Year", "Count": "Tree Count", "Tree Height (ft)": "Tree Height (ft)"},
                       title="Projected Tree Inventory Over Time")
         st.plotly_chart(fig)
-
