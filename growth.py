@@ -50,7 +50,7 @@ else:
 st.sidebar.title("Navigation")
 st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Projected Tree Inventory", "Tree Maintenance"])
 
-def project_tree_growth(data, years=20, new_trees_per_year=0):
+def project_tree_growth(data, years=10, new_trees_per_year=0):  # Now limited to 10 years
     projections = []
     for year in range(0, years + 1):
         year_data = data.copy()
@@ -71,7 +71,7 @@ def project_tree_growth(data, years=20, new_trees_per_year=0):
         projections.append(year_data)
     return pd.concat(projections)
 
-def create_summary(projection, years=20):
+def create_summary(projection):
     projection["Tree Height (ft)"] = projection["Tree Height (ft)"].apply(lambda x: int(x))  # Bin tree heights to whole numbers
     summary = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().unstack(fill_value=0).reset_index()
     summary_melted = projection.groupby(["Tree Height (ft)", "Year"])['Count'].sum().reset_index()  # For the plot
@@ -88,13 +88,16 @@ if "Projected Tree Inventory" in st.sidebar.radio("Navigation", ["Lot Map", "Tre
 
     if st.button("Calculate"):
         projected_data = project_tree_growth(data, years=10, new_trees_per_year=st.session_state["new_trees"])
-        projected_data = project_tree_growth(data, years=20, new_trees_per_year=st.session_state["new_trees"])
         summary_data, summary_melted = create_summary(projected_data)
-        st.session_state["summary_data"] = summary_data
+
+        # Create a limited version of summary_data (only rows 1-26)
+        summary_data_limited = summary_data.iloc[1:27].copy()
+        
+        st.session_state["summary_data_limited"] = summary_data_limited
         st.session_state["summary_melted"] = summary_melted
 
-    if "summary_data" in st.session_state:
-        st.dataframe(st.session_state["summary_data"])  # Display summary table correctly
+    if "summary_data_limited" in st.session_state:
+        st.dataframe(st.session_state["summary_data_limited"])  # Display only rows 1-26
 
         # Create a line plot using the melted summary data
         fig = px.line(st.session_state["summary_melted"], x="Year", y="Count", color="Tree Height (ft)", 
