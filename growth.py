@@ -24,15 +24,21 @@ def generate_tree_table(b30, o_values):
     if len(o_values) != 26:
         raise ValueError("Expected exactly 26 values for O2:O27.")
     
-    # Initialize the output table
-    output_table = pd.DataFrame(index=range(27), columns=range(12))
+    # Define column headers
+    column_headers = ["", "Tree Height (ft)"] + list(range(2025, 2035 + 1))
+    
+    # Initialize the output table with column headers
+    output_table = pd.DataFrame(index=range(27), columns=column_headers)
+    
+    # Set the first column as tree height values
+    output_table.iloc[1:27, 1] = b_values
     
     # Fill the first row (C2:L2) with B30
-    output_table.iloc[1, 2:12] = b30
+    output_table.iloc[1, 2:] = b30
     
     # Fill C3:L27 based on the given formula: IF($O2<=B2,B2-$O2,B2-B2)
     for row in range(2, 27):  # Row indices corresponding to 3-27 in Excel
-        for col in range(2, 12):  # Column indices corresponding to C-L in Excel
+        for col_idx, col in enumerate(range(2, len(column_headers))):  # Column indices corresponding to years
             b_value = b_values[row - 2]  # B2:B27 values
             o_value = o_values[row - 2]  # O2:O27 values
             
