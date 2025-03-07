@@ -4,6 +4,7 @@ import plotly.express as px
 import msoffcrypto
 import io
 import openpyxl
+import xlwings as xw  # Import xlwings for real Excel calculations
 
 # Streamlit page configuration
 st.set_page_config(layout="wide")
@@ -130,12 +131,19 @@ if page == "Projected Tree Inventory":
             ws[cell].value = value
 
         # Save the updated file
-        excel_modified = io.BytesIO()
-        wb.save(excel_modified)
-        excel_modified.seek(0)
+        temp_file = "Updated_SPTF_Count.xlsx"
+        wb.save(temp_file)
 
-        ### **Force Excel Recalculation by Reopening the File**
-        wb = openpyxl.load_workbook(excel_modified, data_only=True)  # Reload computed values
+        ### **Force Excel to Recalculate with xlwings**
+        app = xw.App(visible=False)  # Open Excel in the background
+        wb_xl = xw.Book(temp_file)  # Open workbook
+        wb_xl.app.calculate()  # Force recalculation
+        wb_xl.save()  # Save the updated file
+        wb_xl.close()  # Close workbook
+        app.quit()  # Close Excel
+
+        # Reload the recalculated workbook
+        wb = openpyxl.load_workbook(temp_file, data_only=True)  # Load computed values
         ws = wb["calculations"]
 
         # Extract the A1:L28 range as a DataFrame
@@ -153,12 +161,13 @@ if page == "Projected Tree Inventory":
         st.dataframe(df_calculations.iloc[1:], hide_index=True)
 
         # Provide a download option for the updated Excel file
-        st.download_button(
-            label="Download Updated Excel",
-            data=excel_modified,
-            file_name="Updated_SPTF_Count.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+        with open(temp_file, "rb") as f:
+            st.download_button(
+                label="Download Updated Excel",
+                data=f,
+                file_name="Updated_SPTF_Count.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
 
     # 📊 Bar Chart: Display user modifications as Tree Count vs Tree Height
     all_tree_counts = {
