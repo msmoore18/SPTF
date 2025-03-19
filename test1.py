@@ -9,7 +9,7 @@ st.set_page_config(layout="wide")
 
 # Load password-protected Excel file
 def load_data(password):
-    file_path = "SPTF_Inventory.xlsx"
+    file_path = "SPTF_Inventory_25.xlsx"
     try:
         with open(file_path, "rb") as file:
             decrypted = io.BytesIO()
