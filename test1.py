@@ -60,8 +60,6 @@ if "data" not in st.session_state:
 
     st.stop()
 
-
-
 # Ensure data is available before proceeding
 if "data" in st.session_state:
     data = st.session_state["data"]
@@ -86,11 +84,12 @@ if page != "Lot Map":
         0.5
     )
 
-quality_options = st.sidebar.multiselect(
-    "Select Quality",
-    options=data["Quality"].unique(),
-    default=[q for q in data["Quality"].unique() if q in ["A", "B", "C", "OC"]]  # Ensuring OC is included
-)
+    # Ensure "OC" is included in the quality filter
+    quality_options = st.sidebar.multiselect(
+        "Select Quality",
+        options=data["Quality"].unique(),
+        default=[q for q in data["Quality"].unique() if q in ["A", "B", "C", "OC"]]
+    )
 
     lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
     selected_lot = st.sidebar.selectbox("Select Lot", options=lot_options)
@@ -105,7 +104,6 @@ quality_options = st.sidebar.multiselect(
         (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & 
         (data["Quality"].isin(quality_options))
     ]
-
 
 if page == "Tree Inventory":
     st.title("2025 Inventory for Spruce Point Tree Farm")
@@ -157,7 +155,7 @@ elif page == "Lot Map":
 elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
-    st.write("This page lets you customize and download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut), Lot #, and Tree Height you want displayed in the table")
+    st.write("This page lets you customize and download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut, OC: Overcrowding), Lot #, and Tree Height you want displayed in the table")
 
     # Filtered summary of trees
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])['Count'].sum().reset_index()
