@@ -172,3 +172,6 @@ elif page == "Tree Maintenance":
     st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
     st.dataframe(tree_summary, hide_index=True)
     st.markdown('</div>', unsafe_allow_html=True)
+
+st.write("Unique Quality Values:", data["Quality"].unique())
+
