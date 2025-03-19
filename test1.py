@@ -4,6 +4,62 @@ import plotly.express as px
 import msoffcrypto
 import io
 
+# Streamlit page configuration
+st.set_page_config(layout="wide")
+
+# Load password-protected Excel file
+def load_data(password):
+    file_path = "SPTF_Inventory_25.xlsx"
+    try:
+        with open(file_path, "rb") as file:
+            decrypted = io.BytesIO()
+            office_file = msoffcrypto.OfficeFile(file)
+
+            if not office_file.is_encrypted():
+                return pd.read_excel(file_path)
+
+            office_file.load_key(password)
+            office_file.decrypt(decrypted)
+            return pd.read_excel(decrypted)
+    except Exception:
+        return None
+
+# User enters password
+if "data" not in st.session_state:
+    st.title("Enter Password to Access Data")
+
+    def submit_password():
+        password = st.session_state.password_input
+        if password:
+            data = load_data(password)
+            if data is None:
+                st.session_state["password_error"] = True
+            else:
+                st.session_state["data"] = data
+                st.session_state["password_error"] = False
+
+    # Initialize the error state
+    if "password_error" not in st.session_state:
+        st.session_state["password_error"] = False
+
+    st.text_input(
+        "Excel File Password:",
+        type="password",
+        key="password_input",
+        on_change=submit_password
+    )
+
+    if st.button("Enter"):
+        submit_password()
+
+    # Handle errors or success after callback/button press
+    if st.session_state.get("password_error"):
+        st.error("Incorrect password or file issue. Please try again.")
+    elif "data" in st.session_state:
+        st.rerun()  # Now outside the callback, safe to call
+
+    st.stop()
+
 # Ensure data is available before proceeding
 if "data" in st.session_state:
     data = st.session_state["data"]
@@ -51,12 +107,12 @@ if page != "Lot Map":
 
 if page == "Tree Inventory":
     st.title("2025 Inventory for Spruce Point Tree Farm")
-    st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Tree Count'].sum()}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
 
     # Tree Count vs Tree Height
-    height_group = filtered_data.groupby("Tree Height (ft)")["Tree Count"].sum()
-    fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Tree Count', 
-                 labels={'Tree Height (ft)': 'Tree Height (ft)', 'Tree Count': 'Tree Count'})
+    height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
+    fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count', 
+                 labels={'Tree Height (ft)': 'Tree Height (ft)', 'Count': 'Tree Count'})
     fig.update_layout(xaxis=dict(tickmode='array', tickvals=height_group.index))
     st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
     st.plotly_chart(fig)
@@ -65,16 +121,16 @@ if page == "Tree Inventory":
     # Pie Chart
     height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], 
                          labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
-    height_distribution = filtered_data.groupby(height_bins)["Tree Count"].sum().reset_index()
-    fig = px.pie(height_distribution, names="Tree Height (ft)", values="Tree Count")
+    height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
+    fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
     fig.update_layout(legend=dict(x=.1, y=0.5))
     st.plotly_chart(fig)
 
     # Tree Count vs Lot (only appears if selected_lot == 'All')
     if selected_lot == 'All':
-        lot_group = filtered_data.groupby("Lot")["Tree Count"].sum().reset_index()
-        fig_lot = px.bar(lot_group, x='Lot', y='Tree Count',
-                         labels={'Lot': 'Lot', 'Tree Count': 'Tree Count'})
+        lot_group = filtered_data.groupby("Lot")["Count"].sum().reset_index()
+        fig_lot = px.bar(lot_group, x='Lot', y='Count',
+                         labels={'Lot': 'Lot', 'Count': 'Tree Count'})
         fig_lot.update_layout(xaxis=dict(type='category'))
     
         st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
@@ -83,22 +139,26 @@ if page == "Tree Inventory":
 
     # Tree Count vs Row (only appears if selected_lot does not = 'All')
     if selected_lot != 'All':
-        lot_group = filtered_data.groupby("Row")["Tree Count"].sum().reset_index()
-        fig_lot = px.bar(lot_group, x='Row', y='Tree Count',
-                         labels={'Row': 'Row', 'Tree Count': 'Tree Count'})
+        lot_group = filtered_data.groupby("Row")["Count"].sum().reset_index()
+        fig_lot = px.bar(lot_group, x='Row', y='Count',
+                         labels={'Row': 'Row', 'Count': 'Tree Count'})
         fig_lot.update_layout(xaxis=dict(type='category'))
     
         st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
         st.plotly_chart(fig_lot)
         st.markdown('</div>', unsafe_allow_html=True)
 
+elif page == "Lot Map":
+    st.title("Lot Map")
+    st.image("map_larger.png")
+
 elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
-    st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Tree Count'].sum()}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
     st.write("This page lets you customize and download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut, OC: Overcrowding), Lot #, and Tree Height you want displayed in the table")
 
     # Filtered summary of trees
-    tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])['Tree Count'].sum().reset_index()
+    tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])['Count'].sum().reset_index()
     tree_summary["Work Completed?"] = ""
 
     # Display table
@@ -112,3 +172,5 @@ elif page == "Tree Maintenance":
     st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
     st.dataframe(tree_summary, hide_index=True)
     st.markdown('</div>', unsafe_allow_html=True)
+
+st.write("Unique Quality Values in Data:", data["Quality"].unique())
