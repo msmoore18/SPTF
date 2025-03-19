@@ -1,3 +1,9 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+import msoffcrypto
+import io
+
 # Ensure data is available before proceeding
 if "data" in st.session_state:
     data = st.session_state["data"]
