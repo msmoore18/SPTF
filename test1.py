@@ -76,13 +76,15 @@ page = st.sidebar.radio("Go to", ["Lot Map", "Tree Inventory", "Tree Maintenance
 st.sidebar.header("Filter Options")
 height_range = st.sidebar.slider(
     "Select Tree Height Range (ft)",
-    int(data["Tree Height (ft)"].min()),
-    int(data["Tree Height (ft)"].max()),
+    float(data["Tree Height (ft)"].min()),  # Ensure the minimum is a float
+    float(data["Tree Height (ft)"].max()),  # Ensure the maximum is a float
     (
-        int(data["Tree Height (ft)"].min()),
-        int(data["Tree Height (ft)"].max())
-    )
+        float(data["Tree Height (ft)"].min()), 
+        float(data["Tree Height (ft)"].max())
+    ),
+    0.5  # Set step to 0.5 for 0.5 ft increments
 )
+
 
 quality_options = st.sidebar.multiselect(
     "Select Quality",
