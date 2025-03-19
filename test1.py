@@ -9,7 +9,7 @@ st.set_page_config(layout="wide")
 
 # Load password-protected Excel file
 def load_data(password):
-    file_path = "SPTF_INVENTORY_2025.xlsx"
+    file_path = "SPTF_2025.xlsx"
     try:
         with open(file_path, "rb") as file:
             decrypted = io.BytesIO()
@@ -86,11 +86,11 @@ if page != "Lot Map":
         0.5
     )
 
-    quality_options = st.sidebar.multiselect(
-        "Select Quality",
-        options=data["Quality"].unique(),
-        default=data["Quality"].unique()
-    )
+quality_options = st.sidebar.multiselect(
+    "Select Quality",
+    options=data["Quality"].unique(),
+    default=[q for q in data["Quality"].unique() if q in ["A", "B", "C", "OC"]]  # Ensuring OC is included
+)
 
     lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
     selected_lot = st.sidebar.selectbox("Select Lot", options=lot_options)
