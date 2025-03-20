@@ -165,7 +165,7 @@ elif page == "Lot Map":
     st.image("map_larger.png")
 
 elif page == "Table":
-    st.title("Table Table")
+    st.title("2025 Inventory for Spruce Point Tree Farm")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
 
     # Filtered summary of trees
