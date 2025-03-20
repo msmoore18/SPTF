@@ -118,8 +118,6 @@ if page != "Lot Map":
         (data["Quality"].isin(quality_options))
     ]
 
-st.sidebar.image("SprucePointTreeFarmsBlack.png", width=250)
-
 if page == "Plots":
     st.title("2025 Inventory for Spruce Point Tree Farm")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
