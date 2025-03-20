@@ -84,16 +84,16 @@ if page != "Lot Map":
         0.5
     )
 
-# Define desired order
-quality_order = ["A", "B", "C", "OC"]
-
-# Filter only existing quality values in the dataset, keeping order
-available_qualities = [q for q in quality_order if q in data["Quality"].unique()]
-
-quality_options = st.sidebar.multiselect(
-    "Select Quality",
-    options=available_qualities,  # Now ordered correctly
-    default=available_qualities   # Default to all available in order
+    # Define desired order
+    quality_order = ["A", "B", "C", "OC"]
+    
+    # Filter only existing quality values in the dataset, keeping order
+    available_qualities = [q for q in quality_order if q in data["Quality"].unique()]
+    
+    quality_options = st.sidebar.multiselect(
+        "Select Quality",
+        options=available_qualities,  # Now ordered correctly
+        default=available_qualities   # Default to all available in order
 )
 
     
