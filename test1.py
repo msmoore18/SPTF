@@ -67,7 +67,7 @@ else:
     st.stop()
 
 # Sidebar navigation
-st.sidebar.image("SprucePointTreeFarms.png",width)
+st.sidebar.image("SprucePointTreeFarms.png", width=150)
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Plots", "Table", "Lot Map"])
 
