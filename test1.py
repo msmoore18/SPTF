@@ -68,7 +68,7 @@ else:
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Tree Inventory", "Tree Maintenance", "Lot Map"])
+page = st.sidebar.radio("Go to", ["Plots", "Table", "Lot Map"])
 
 # Show filter options only if not on the "Lot Map" page
 if page != "Lot Map":
@@ -117,7 +117,7 @@ if page != "Lot Map":
         (data["Quality"].isin(quality_options))
     ]
 
-if page == "Tree Inventory":
+if page == "Plots":
     st.title("2025 Inventory for Spruce Point Tree Farm")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
 
@@ -164,8 +164,8 @@ elif page == "Lot Map":
     st.title("Lot Map")
     st.image("map_larger.png")
 
-elif page == "Tree Maintenance":
-    st.title("Tree Maintenance Table")
+elif page == "Table":
+    st.title("Table Table")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
 
     # Filtered summary of trees
