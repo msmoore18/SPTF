@@ -68,7 +68,15 @@ else:
 
 
 # Sidebar navigation
-st.sidebar.image("SprucePointTreeFarmsBlack.png", width=100)
+st.sidebar.markdown(
+    """
+    <div style="display: flex; justify-content: center;">
+        <img src="SprucePointTreeFarmsBlack.png" width="100">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Plots", "Table", "Lot Map"])
 
