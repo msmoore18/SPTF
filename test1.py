@@ -118,7 +118,7 @@ if page != "Lot Map":
         (data["Quality"].isin(quality_options))
     ]
 
-st.sidebar.image("SprucePointTreeFarmsBlack.png", width=200)
+st.sidebar.image("SprucePointTreeFarmsBlack.png", width=25)
 
 if page == "Plots":
     st.title("2025 Inventory for Spruce Point Tree Farm")
