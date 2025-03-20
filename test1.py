@@ -116,9 +116,9 @@ if page != "Lot Map":
         (data["Lot"].isin(lots)) & 
         (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & 
         (data["Quality"].isin(quality_options))
-    
-    st.sidebar.image("SprucePointTreeFarmsBlack.png", width=200)
     ]
+
+st.sidebar.image("SprucePointTreeFarmsBlack.png", width=200)
 
 if page == "Plots":
     st.title("2025 Inventory for Spruce Point Tree Farm")
