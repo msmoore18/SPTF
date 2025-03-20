@@ -65,6 +65,19 @@ if "data" in st.session_state:
     data = st.session_state["data"]
 else:
     st.stop()
+    
+#Grey background color for navigation bar    
+st.markdown(
+    """
+    <style>
+        [data-testid="stSidebar"] {
+            background-color: #333333; /* Dark gray */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 
 # Sidebar navigation
 st.sidebar.image("SprucePointTreeFarms.png", width=150)
