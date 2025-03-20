@@ -89,11 +89,11 @@ if page != "Lot Map":
         "Select Quality",
         options=data["Quality"].unique(),
         default=[q for q in data["Quality"].unique() if q in ["A", "B", "C", "OC"]]
-        st.sidebar.write("A = Good")
-        st.sidebar.write("B = Needs Pruning")
-        st.sidebar.write("C = Needs to be Cut")
-        st.sidebar.write("OC = Overcrowded")
     )
+    st.sidebar.write("A = Good")
+    st.sidebar.write("B = Needs Pruning")
+    st.sidebar.write("C = Needs to be Cut")
+    st.sidebar.write("OC = Overcrowded")
 
     lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
     selected_lot = st.sidebar.selectbox("Select Lot", options=lot_options)
