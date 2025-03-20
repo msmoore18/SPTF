@@ -84,12 +84,19 @@ if page != "Lot Map":
         0.5
     )
 
-    # Ensure "OC" is included in the quality filter
-    quality_options = st.sidebar.multiselect(
-        "Select Quality",
-        options=data["Quality"].unique(),
-        default=[q for q in data["Quality"].unique() if q in ["A", "B", "C", "OC"]]
-    )
+# Define desired order
+quality_order = ["A", "B", "C", "OC"]
+
+# Filter only existing quality values in the dataset, keeping order
+available_qualities = [q for q in quality_order if q in data["Quality"].unique()]
+
+quality_options = st.sidebar.multiselect(
+    "Select Quality",
+    options=available_qualities,  # Now ordered correctly
+    default=available_qualities   # Default to all available in order
+)
+
+    
     st.sidebar.markdown("**A** = Good  \n**B** = Needs Pruning  \n**C** = Needs to be Cut  \n**OC** = Overcrowded")
 
     lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
