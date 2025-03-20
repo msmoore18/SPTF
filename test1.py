@@ -68,15 +68,6 @@ else:
 
 
 # Sidebar navigation
-st.sidebar.markdown(
-    """
-    <div style="display: flex; justify-content: center;">
-        <img src="SprucePointTreeFarmsBlack.png" width="100">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Plots", "Table", "Lot Map"])
 
@@ -125,6 +116,8 @@ if page != "Lot Map":
         (data["Lot"].isin(lots)) & 
         (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & 
         (data["Quality"].isin(quality_options))
+    
+    st.sidebar.image("SprucePointTreeFarmsBlack.png", width=200)
     ]
 
 if page == "Plots":
