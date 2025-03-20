@@ -89,6 +89,10 @@ if page != "Lot Map":
         "Select Quality",
         options=data["Quality"].unique(),
         default=[q for q in data["Quality"].unique() if q in ["A", "B", "C", "OC"]]
+        st.sidebar.write("A = Good")
+        st.sidebar.write("B = Needs Pruning")
+        st.sidebar.write("C = Needs to be Cut")
+        st.sidebar.write("OC = Overcrowded")
     )
 
     lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
@@ -155,7 +159,6 @@ elif page == "Lot Map":
 elif page == "Tree Maintenance":
     st.title("Tree Maintenance Table")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
-    st.write("This page lets you customize and download a printable table for Rudy. Use the filters on the left to select which Quality (B: Needs Pruning, C: Needs to be cut, OC: Overcrowding), Lot #, and Tree Height you want displayed in the table")
 
     # Filtered summary of trees
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])['Count'].sum().reset_index()
