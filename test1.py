@@ -163,11 +163,7 @@ elif page == "Tree Maintenance":
 
     # Display table
     csv = tree_summary.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        label="Download Table as CSV",
-        data=csv,
-        file_name="tree_summary.csv",
-        mime="text/csv"
+
     )
     st.markdown('<div style="display: flex; justify-content: center;">', unsafe_allow_html=True)
     st.dataframe(tree_summary, hide_index=True)
