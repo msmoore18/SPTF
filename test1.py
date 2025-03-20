@@ -69,7 +69,7 @@ else:
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Plots", "Table", "Lot Map"])
+page = st.sidebar.radio(["Plots", "Table", "Lot Map"])
 
 # Show filter options only if not on the "Lot Map" page
 if page != "Lot Map":
