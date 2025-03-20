@@ -67,6 +67,7 @@ else:
     st.stop()
 
 # Sidebar navigation
+st.sidebar.image("SprucePointTreeFarms.png", use_column_width=True)
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["Plots", "Table", "Lot Map"])
 
