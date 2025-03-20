@@ -90,11 +90,15 @@ if page != "Lot Map":
     # Filter only existing quality values in the dataset, keeping order
     available_qualities = [q for q in quality_order if q in data["Quality"].unique()]
     
+    # Define default selection (A, B, C only)
+    default_selection = [q for q in ["A", "B", "C"] if q in available_qualities]
+    
     quality_options = st.sidebar.multiselect(
         "Select Quality",
         options=available_qualities,  # Now ordered correctly
-        default=available_qualities   # Default to all available in order
-)
+        default=default_selection     # Only A, B, C selected by default
+    )
+
 
     
     st.sidebar.markdown("**A** = Good  \n**B** = Needs Pruning  \n**C** = Needs to be Cut  \n**OC** = Overcrowded")
