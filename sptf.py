@@ -46,7 +46,9 @@ if "inventory_data" not in st.session_state or "sales_data" not in st.session_st
         password = st.session_state.password_input
         if password:
             inventory_data, sales_data = load_data(password)
-            if inventory_data is None:
+            if (inventory_data is None or sales_data is None or
+                "Tree Height (ft)" not in inventory_data.columns or
+                "Tree Height (ft)" not in sales_data.columns):
                 st.session_state["password_error"] = True
             else:
                 st.session_state["inventory_data"] = inventory_data
