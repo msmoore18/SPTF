@@ -108,9 +108,6 @@ if page in ["Inventory: Plots"]:
             fig_lot = px.bar(filtered_data.groupby("Row")["Count"].sum().reset_index(), x='Row', y='Count')
             st.plotly_chart(fig_lot)
 
-        st.title("2025 Inventory for Spruce Point Tree Farm")
-        st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
-
         tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
         tree_summary["Work Completed?"] = ""
         st.dataframe(tree_summary, hide_index=True)
