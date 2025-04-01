@@ -125,6 +125,7 @@ elif page == "Sales: Plots":
     st.title("Spruce Point Tree Farm Sales History")
 
     st.sidebar.header("Sales Filters")
+
     height_range = st.sidebar.slider("Tree Height Range (ft)", float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max()), (float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max())), 0.5)
 
     quality_options = st.sidebar.multiselect("Select Quality (A & B only)", ["A", "B"], default=["A", "B"])
@@ -154,14 +155,16 @@ elif page == "Sales: Plots":
         fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), x="Tree Height (ft)", y="Quantity", labels={"Quantity": "Tree Count"})
         st.plotly_chart(fig)
 
-        fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity")
+        fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
         st.plotly_chart(fig)
 
     elif metric == "Revenue":
         st.markdown(f"<h3 style='color:green;'>Total Revenue Based on Filter Selections: ${sales_filtered['Revenue'].sum():,.2f}</h3>", unsafe_allow_html=True)
 
-        fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Revenue"].sum().reset_index(), x="Tree Height (ft)", y="Revenue", labels={"Revenue": "Revenue"})
+        fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Revenue"].sum().reset_index(), x="Tree Height (ft)", y="Revenue", labels={"Revenue": "Revenue ($)"})
+        fig.update_yaxes(tickprefix="$")
         st.plotly_chart(fig)
 
-        fig = px.pie(sales_filtered.groupby("Customer")["Revenue"].sum().reset_index(), names="Customer", values="Revenue")
+        fig = px.pie(sales_filtered.groupby("Customer")["Revenue"].sum().reset_index(), names="Customer", values="Revenue", title="Revenue Distribution by Customer")
+        fig.update_traces(textinfo='percent+value', texttemplate='%{percent} <br> $%{value:,.0f}')
         st.plotly_chart(fig)
