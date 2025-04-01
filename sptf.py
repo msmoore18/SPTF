@@ -63,7 +63,7 @@ else:
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go To", ["Current Inventory", "Historical Sales", "SPTF Lot Map"])
+page = st.sidebar.radio("Go To", ["Current Inventory", "Historical Sales", "Lot Map"])
 
 # Inventory Pages
 if page in ["Current Inventory"]:
@@ -112,8 +112,8 @@ if page in ["Current Inventory"]:
         tree_summary["Work Completed?"] = ""
         st.dataframe(tree_summary, hide_index=True)
 
-elif page == "SPTF Lot Map":
-    st.title("SPTF Lot Map")
+elif page == "Lot Map":
+    st.title("Lot Map")
     st.image("map_larger.png")
 
 # Sales Plots
