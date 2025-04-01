@@ -63,10 +63,10 @@ else:
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go To", ["Inventory: Plots", "Sales: Plots", "SPTF Lot Map"])
+page = st.sidebar.radio("Go To", ["Current Inventory", "Historical Sales", "SPTF Lot Map"])
 
 # Inventory Pages
-if page in ["Inventory: Plots"]:
+if page in ["Current Inventory"]:
     st.sidebar.header("Filter Options")
     height_range = st.sidebar.slider("Select Tree Height Range (ft)", float(data["Tree Height (ft)"].min()), float(data["Tree Height (ft)"].max()), (float(data["Tree Height (ft)"].min()), float(data["Tree Height (ft)"].max())), 0.5)
 
@@ -88,7 +88,7 @@ if page in ["Inventory: Plots"]:
 
     filtered_data = data[(data["Lot"].isin(lots)) & (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (data["Quality"].isin(quality_options))]
 
-    if page == "Inventory: Plots":
+    if page == "Current Inventory":
         st.title("2025 Inventory for Spruce Point Tree Farm")
         st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
 
@@ -117,7 +117,7 @@ elif page == "SPTF Lot Map":
     st.image("map_larger.png")
 
 # Sales Plots
-elif page == "Sales: Plots":
+elif page == "Historical Sales":
     st.title("Spruce Point Tree Farm Sales History")
 
     st.sidebar.header("Sales Filters")
