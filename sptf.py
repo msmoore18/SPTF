@@ -129,16 +129,16 @@ elif page == "Sales: Plots":
 
     quality_options = st.sidebar.multiselect("Select Quality (A & B only)", ["A", "B"], default=["A", "B"])
 
-    customers = sorted(sales_data["Customer"].dropna().unique())
-    selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customers))
+    customer = sorted(sales_data["Customer"].dropna().unique())
+    selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customer))
 
     years = ['All'] + sorted(sales_data["Sales Year"].dropna().unique())
     selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=years)
 
     sales_filtered = sales_data[(sales_data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (sales_data["Quality"].isin(quality_options))]
 
-    if 'All' not in selected_customers:
-        sales_filtered = sales_filtered[sales_filtered["Customer"].isin(selected_customers)]
+    if 'All' not in selected_customer:
+        sales_filtered = sales_filtered[sales_filtered["Customer"].isin(selected_customer)]
 
     if 'All' not in selected_years:
         sales_filtered = sales_filtered[sales_filtered["Sales Year"].isin(selected_years)]
