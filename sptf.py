@@ -137,8 +137,8 @@ elif page == "Sales: Plots":
 
     sales_filtered = sales_data[(sales_data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (sales_data["Quality"].isin(quality_options))]
 
-    if 'All' not in selected_customer:
-        sales_filtered = sales_filtered[sales_filtered["Customer"].isin(selected_customer)]
+    if selected_customer != "All":
+        sales_filtered = sales_filtered[sales_filtered["Customer"] == selected_customer]
 
     if 'All' not in selected_years:
         sales_filtered = sales_filtered[sales_filtered["Sales Year"].isin(selected_years)]
