@@ -129,8 +129,8 @@ elif page == "Sales: Plots":
 
     quality_options = st.sidebar.multiselect("Select Quality (A & B only)", ["A", "B"], default=["A", "B"])
 
-    customers = ['All'] + sorted(sales_data["Customer"].dropna().unique())
-    selected_customers = st.sidebar.multiselect("Select Customer(s)", customers, default=customers)
+    customers = sorted(sales_data["Customer"].dropna().unique())
+    selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customers))
 
     years = ['All'] + sorted(sales_data["Sales Year"].dropna().unique())
     selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=years)
