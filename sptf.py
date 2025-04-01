@@ -118,7 +118,7 @@ elif page == "Lot Map":
 
 # Sales Plots
 elif page == "Historical Sales":
-    st.title("Sales History")
+    st.title("Historical Sales")
 
     st.sidebar.header("Sales Filters")
 
