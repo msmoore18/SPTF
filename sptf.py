@@ -124,6 +124,8 @@ elif page == "SPTF Lot Map":
 elif page == "Sales: Plots":
     st.title("Sales: Plots")
 
+    st.markdown(f"<h3 style='color:green;'>Total Tree Sales Based on Filter Selections: {sales_filtered['Quantity'].sum()}</h3>", unsafe_allow_html=True)
+
     st.sidebar.header("Sales Filters")
     height_range = st.sidebar.slider("Tree Height Range (ft)", float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max()), (float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max())), 0.5)
 
