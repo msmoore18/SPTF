@@ -146,7 +146,7 @@ elif page == "Sales: Plots":
         sales_filtered = sales_filtered[sales_filtered["Sales Year"].isin(selected_years)]
 
     sales_filtered = sales_filtered.copy()
-    sales_filtered["Revenue"] = sales_filtered["Quantity"] * sales_filtered["Tree Height (ft)"]
+    sales_filtered["Revenue"] = sales_filtered["Quantity"] * sales_filtered["Cost Per Tree"]
 
     if metric == "Tree Count":
         st.markdown(f"<h3 style='color:green;'>Total Tree Sales Based on Filter Selections: {sales_filtered['Quantity'].sum()}</h3>", unsafe_allow_html=True)
