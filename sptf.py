@@ -29,7 +29,7 @@ def load_data(password):
         return None, None
 
 # --- First password for accessing data ---
-if "data" not in st.session_state:
+if "inventory_data" not in st.session_state or "sales_data" not in st.session_state:
     st.title("Enter Password to Access Data")
 
     def submit_password():
