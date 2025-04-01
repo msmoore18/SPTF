@@ -63,7 +63,7 @@ else:
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go To", ["Inventory: Plots", "Inventory: Table", "SPTF Lot Map", "Sales: Plots"])
+page = st.sidebar.radio("Go To", ["Inventory: Plots", "Inventory: Table", "Sales: Plots", "SPTF Lot Map"])
 
 # Inventory Pages
 if page in ["Inventory: Plots", "Inventory: Table"]:
@@ -122,7 +122,7 @@ elif page == "SPTF Lot Map":
 
 # Sales Plots
 elif page == "Sales: Plots":
-    st.title("Sales: Plots")
+    st.title("Spruce Point Tree Farm Sales History")
 
     st.sidebar.header("Sales Filters")
     height_range = st.sidebar.slider("Tree Height Range (ft)", float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max()), (float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max())), 0.5)
