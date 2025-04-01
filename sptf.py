@@ -63,10 +63,10 @@ else:
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go To", ["Inventory: Plots", "Inventory: Table", "Sales: Plots", "SPTF Lot Map"])
+page = st.sidebar.radio("Go To", ["Inventory: Plots", "Sales: Plots", "SPTF Lot Map"])
 
 # Inventory Pages
-if page in ["Inventory: Plots", "Inventory: Table"]:
+if page in ["Inventory: Plots"]:
     st.sidebar.header("Filter Options")
     height_range = st.sidebar.slider("Select Tree Height Range (ft)", float(data["Tree Height (ft)"].min()), float(data["Tree Height (ft)"].max()), (float(data["Tree Height (ft)"].min()), float(data["Tree Height (ft)"].max())), 0.5)
 
@@ -108,7 +108,6 @@ if page in ["Inventory: Plots", "Inventory: Table"]:
             fig_lot = px.bar(filtered_data.groupby("Row")["Count"].sum().reset_index(), x='Row', y='Count')
             st.plotly_chart(fig_lot)
 
-    elif page == "Inventory: Table":
         st.title("2025 Inventory for Spruce Point Tree Farm")
         st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
 
