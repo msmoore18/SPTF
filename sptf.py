@@ -89,7 +89,7 @@ if page in ["Current Inventory"]:
     filtered_data = data[(data["Lot"].isin(lots)) & (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (data["Quality"].isin(quality_options))]
 
     if page == "Current Inventory":
-        st.title("2025 Inventory for Spruce Point Tree Farm")
+        st.title("Current Inventory for Spruce Point Tree Farm")
         st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
 
         height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
