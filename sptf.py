@@ -145,10 +145,8 @@ elif page == "Sales: Plots":
 
     st.markdown(f"<h3 style='color:green;'>Total Tree Sales Based on Filter Selections: {sales_filtered['Quantity'].sum()}</h3>", unsafe_allow_html=True)
 
-    st.subheader("Trees Sold vs Tree Height")
     fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), x="Tree Height (ft)", y="Quantity")
     st.plotly_chart(fig)
 
-    st.subheader("Trees Sold by Customer")
     fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity")
     st.plotly_chart(fig)
