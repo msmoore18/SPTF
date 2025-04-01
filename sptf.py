@@ -132,6 +132,7 @@ elif page == "Sales: Plots":
     customer = sorted(sales_data["Customer"].dropna().unique())
     selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customer))
 
+    years = sorted(sales_data["Sales Year"].dropna().unique())
     selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=years)
 
     sales_filtered = sales_data[(sales_data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (sales_data["Quality"].isin(quality_options))]
