@@ -135,6 +135,8 @@ elif page == "Sales: Plots":
     years = sorted(sales_data["Sales Year"].dropna().unique())
     selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=years)
 
+    metric = st.sidebar.radio("Select Metric", ["Tree Count", "Revenue"])
+
     sales_filtered = sales_data[(sales_data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (sales_data["Quality"].isin(quality_options))]
 
     if selected_customer != "All":
@@ -143,10 +145,23 @@ elif page == "Sales: Plots":
     if 'All' not in selected_years:
         sales_filtered = sales_filtered[sales_filtered["Sales Year"].isin(selected_years)]
 
-    st.markdown(f"<h3 style='color:green;'>Total Tree Sales Based on Filter Selections: {sales_filtered['Quantity'].sum()}</h3>", unsafe_allow_html=True)
+    sales_filtered = sales_filtered.copy()
+    sales_filtered["Revenue"] = sales_filtered["Quantity"] * sales_filtered["Tree Height (ft)"]
 
-    fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), x="Tree Height (ft)", y="Quantity")
-    st.plotly_chart(fig)
+    if metric == "Tree Count":
+        st.markdown(f"<h3 style='color:green;'>Total Tree Sales Based on Filter Selections: {sales_filtered['Quantity'].sum()}</h3>", unsafe_allow_html=True)
 
-    fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity")
-    st.plotly_chart(fig)
+        fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), x="Tree Height (ft)", y="Quantity", labels={"Quantity": "Tree Count"})
+        st.plotly_chart(fig)
+
+        fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity")
+        st.plotly_chart(fig)
+
+    elif metric == "Revenue":
+        st.markdown(f"<h3 style='color:green;'>Total Revenue Based on Filter Selections: ${sales_filtered['Revenue'].sum():,.2f}</h3>", unsafe_allow_html=True)
+
+        fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Revenue"].sum().reset_index(), x="Tree Height (ft)", y="Revenue", labels={"Revenue": "Revenue"})
+        st.plotly_chart(fig)
+
+        fig = px.pie(sales_filtered.groupby("Customer")["Revenue"].sum().reset_index(), names="Customer", values="Revenue")
+        st.plotly_chart(fig)
