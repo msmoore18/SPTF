@@ -165,7 +165,7 @@ elif page == "Historical Sales":
         st.plotly_chart(fig)
 
         if any_pre_2023:
-            st.write("(Plot Unavailable for years before 2023)")
+            st.write("(Customer Pie Chart Unavailable for years before 2023)")
         else:
             fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
             st.plotly_chart(fig)
