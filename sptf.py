@@ -66,7 +66,7 @@ st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go To", ["Current Inventory", "Historical Sales", "Lot Map"])
 
 # Inventory Pages
-if page in ["Current Inventory"]:
+if page == "Current Inventory":
     st.sidebar.header("Filter Options")
     height_range = st.sidebar.slider("Select Tree Height Range (ft)", float(data["Tree Height (ft)"].min()), float(data["Tree Height (ft)"].max()), (float(data["Tree Height (ft)"].min()), float(data["Tree Height (ft)"].max())), 0.5)
 
@@ -88,29 +88,28 @@ if page in ["Current Inventory"]:
 
     filtered_data = data[(data["Lot"].isin(lots)) & (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (data["Quality"].isin(quality_options))]
 
-    if page == "Current Inventory":
-        st.title("Current Tree Inventory")
-        st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
+    st.title("Current Tree Inventory")
+    st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
 
-        height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
-        fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count')
-        st.plotly_chart(fig)
+    height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
+    fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count')
+    st.plotly_chart(fig)
 
-        height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
-        height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
-        fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
-        st.plotly_chart(fig)
+    height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
+    height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
+    fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
+    st.plotly_chart(fig)
 
-        if selected_lot == 'All':
-            fig_lot = px.bar(filtered_data.groupby("Lot")["Count"].sum().reset_index(), x='Lot', y='Count')
-            st.plotly_chart(fig_lot)
-        else:
-            fig_lot = px.bar(filtered_data.groupby("Row")["Count"].sum().reset_index(), x='Row', y='Count')
-            st.plotly_chart(fig_lot)
+    if selected_lot == 'All':
+        fig_lot = px.bar(filtered_data.groupby("Lot")["Count"].sum().reset_index(), x='Lot', y='Count')
+        st.plotly_chart(fig_lot)
+    else:
+        fig_lot = px.bar(filtered_data.groupby("Row")["Count"].sum().reset_index(), x='Row', y='Count')
+        st.plotly_chart(fig_lot)
 
-        tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
-        tree_summary["Work Completed?"] = ""
-        st.dataframe(tree_summary, hide_index=True)
+    tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
+    tree_summary["Work Completed?"] = ""
+    st.dataframe(tree_summary, hide_index=True)
 
 elif page == "Lot Map":
     st.title("Lot Map")
@@ -124,17 +123,25 @@ elif page == "Historical Sales":
 
     height_range = st.sidebar.slider("Tree Height Range (ft)", float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max()), (float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max())), 0.5)
 
-    quality_options = st.sidebar.multiselect("Select Quality (A & B only)", ["A", "B"], default=["A", "B"])
-
-    customer = sorted(sales_data["Customer"].dropna().unique())
-    selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customer))
-
     years = sorted(sales_data["Sales Year"].dropna().unique())
     selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=years)
 
+    if all(year < 2023 for year in selected_years):
+        selected_customer = "All"
+        st.sidebar.markdown("**Customer filter is disabled for years before 2023.**")
+    else:
+        customer = sorted(sales_data["Customer"].dropna().unique())
+        selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customer))
+
+    if all(year < 2023 for year in selected_years):
+        selected_quality = ["A", "B"]
+        st.sidebar.markdown("**Quality filter is disabled for years before 2023.**")
+    else:
+        selected_quality = st.sidebar.multiselect("Select Quality (A & B only)", ["A", "B"], default=["A", "B"])
+
     metric = st.sidebar.radio("Select Metric", ["Tree Count", "Revenue"])
 
-    sales_filtered = sales_data[(sales_data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (sales_data["Quality"].isin(quality_options))]
+    sales_filtered = sales_data[(sales_data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (sales_data["Quality"].isin(selected_quality))]
 
     if selected_customer != "All":
         sales_filtered = sales_filtered[sales_filtered["Customer"] == selected_customer]
@@ -151,8 +158,11 @@ elif page == "Historical Sales":
         fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), x="Tree Height (ft)", y="Quantity", labels={"Quantity": "Tree Count"})
         st.plotly_chart(fig)
 
-        fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
-        st.plotly_chart(fig)
+        if any(year >= 2023 for year in selected_years):
+            fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
+            st.plotly_chart(fig)
+        else:
+            st.markdown("(Data Only Available Starting in 2023.)")
 
     elif metric == "Revenue":
         st.markdown(f"<h3 style='color:green;'>Total Revenue Based on Filter Selections: ${sales_filtered['Revenue'].sum():,.2f}</h3>", unsafe_allow_html=True)
@@ -161,6 +171,9 @@ elif page == "Historical Sales":
         fig.update_yaxes(tickprefix="$")
         st.plotly_chart(fig)
 
-        fig = px.pie(sales_filtered.groupby("Customer")["Revenue"].sum().reset_index(), names="Customer", values="Revenue", title="Revenue Distribution by Customer")
-        fig.update_traces(textinfo='percent+value', texttemplate='%{percent} <br> $%{value:,.0f}')
-        st.plotly_chart(fig)
+        if any(year >= 2023 for year in selected_years):
+            fig = px.pie(sales_filtered.groupby("Customer")["Revenue"].sum().reset_index(), names="Customer", values="Revenue", title="Revenue Distribution by Customer")
+            fig.update_traces(textinfo='percent+value', texttemplate='%{percent} <br> $%{value:,.0f}')
+            st.plotly_chart(fig)
+        else:
+            st.markdown("(Data Only Available Starting in 2023.)")
