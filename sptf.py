@@ -112,17 +112,6 @@ if page in ["Current Inventory"]:
         tree_summary["Work Completed?"] = ""
         st.dataframe(tree_summary, hide_index=True)
 
-        # Additional individual tree bar plot
-        fig_individual = px.bar(
-            filtered_data,
-            x="Tree Height (ft)",
-            y="Count",
-            color=filtered_data.index.astype(str),
-            labels={"Count": "Tree Count", "index": "Tree"},
-            title="Tree Count by Tree Height (Each Tree as Unique Color)"
-        )
-        st.plotly_chart(fig_individual)
-
 elif page == "Lot Map":
     st.title("Lot Map")
     st.image("map_larger.png")
@@ -173,11 +162,21 @@ elif page == "Historical Sales":
     if metric == "Tree Count":
         st.markdown(f"<h3 style='color:green;'>Total Tree Sales Based on Filter Selections: {sales_filtered['Quantity'].sum()}</h3>", unsafe_allow_html=True)
 
+        # Tree Count by Height
         fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), x="Tree Height (ft)", y="Quantity", labels={"Quantity": "Tree Count"})
         st.plotly_chart(fig)
 
-        fig_individual = px.bar(sales_filtered, x="Tree Height (ft)", y="Quantity", color=sales_filtered.index.astype(str), title="Individual Tree Sales")
-        st.plotly_chart(fig_individual)
+        # Grouped bar chart by year
+        fig_year_grouped = px.bar(
+            sales_filtered,
+            x="Tree Height (ft)",
+            y="Quantity",
+            color="Sales Year",
+            barmode="group",
+            labels={"Quantity": "Tree Count"},
+            title="Tree Sales by Height and Year"
+        )
+        st.plotly_chart(fig_year_grouped)
 
         if any_pre_2023:
             st.write("(Data Only Available Starting in 2023.)")
@@ -188,13 +187,23 @@ elif page == "Historical Sales":
     elif metric == "Revenue":
         st.markdown(f"<h3 style='color:green;'>Total Revenue Based on Filter Selections: ${sales_filtered['Revenue'].sum():,.2f}</h3>", unsafe_allow_html=True)
 
+        # Revenue by Height
         fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Revenue"].sum().reset_index(), x="Tree Height (ft)", y="Revenue", labels={"Revenue": "Revenue ($)"})
         fig.update_yaxes(tickprefix="$")
         st.plotly_chart(fig)
 
-        fig_individual = px.bar(sales_filtered, x="Tree Height (ft)", y="Revenue", color=sales_filtered.index.astype(str), title="Individual Tree Revenue")
-        fig_individual.update_yaxes(tickprefix="$")
-        st.plotly_chart(fig_individual)
+        # Grouped bar chart by year
+        fig_year_grouped = px.bar(
+            sales_filtered,
+            x="Tree Height (ft)",
+            y="Revenue",
+            color="Sales Year",
+            barmode="group",
+            labels={"Revenue": "Revenue ($)"},
+            title="Revenue by Height and Year"
+        )
+        fig_year_grouped.update_yaxes(tickprefix="$")
+        st.plotly_chart(fig_year_grouped)
 
         if any_pre_2023:
             st.write("(Data Only Available Starting in 2023.)")
