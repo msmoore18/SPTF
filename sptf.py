@@ -130,16 +130,16 @@ elif page == "Historical Sales":
     only_pre_2023 = all(yr < 2023 for yr in selected_years)
 
     quality_options = ["A", "B"]
+    selected_quality = quality_options
     if only_pre_2023:
-        st.sidebar.selectbox("Select Quality (A & B only)", options=quality_options, index=0, disabled=True)
-        selected_quality = quality_options
+        st.sidebar.multiselect("Select Quality (A & B only)", options=quality_options, default=quality_options, disabled=True)
     else:
-        selected_quality = st.sidebar.multiselect("Select Quality (A & B only)", quality_options, default=quality_options)
+        selected_quality = st.sidebar.multiselect("Select Quality (A & B only)", options=quality_options, default=quality_options)
 
     customer = sorted(sales_data["Customer"].dropna().unique())
+    selected_customer = "All"
     if only_pre_2023:
         st.sidebar.selectbox("Select Customer", options=["All"], index=0, disabled=True)
-        selected_customer = "All"
     else:
         selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customer))
 
@@ -178,3 +178,4 @@ elif page == "Historical Sales":
             fig = px.pie(sales_filtered.groupby("Customer")["Revenue"].sum().reset_index(), names="Customer", values="Revenue", title="Revenue Distribution by Customer")
             fig.update_traces(textinfo='percent+value', texttemplate='%{percent} <br> $%{value:,.0f}')
             st.plotly_chart(fig)
+
