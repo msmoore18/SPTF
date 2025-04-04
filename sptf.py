@@ -134,7 +134,8 @@ elif page == "Historical Sales":
     st.sidebar.header("Sales Filters")
 
     years = sorted(sales_data["Sales Year"].dropna().unique())
-    selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=years)
+    default_years = years[-2:] if len(years) >= 2 else years
+    selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=default_years)
 
     height_range = st.sidebar.slider("Tree Height Range (ft)", float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max()), (float(sales_data["Tree Height (ft)"].min()), float(sales_data["Tree Height (ft)"].max())), 0.5)
 
