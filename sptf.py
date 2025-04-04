@@ -130,7 +130,7 @@ elif page == "Historical Sales":
 
     any_pre_2023 = any(yr < 2023 for yr in selected_years)
 
-    st.sidebar.markdown("(The following filters are unavailable before 2023)")
+    st.sidebar.markdown("(The following filters are only available for years 2023 and beyond)")
 
     quality_options = ["A", "B"]
     selected_quality = quality_options
@@ -146,7 +146,8 @@ elif page == "Historical Sales":
     else:
         selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customer))
 
-    metric = st.sidebar.radio("Select Metric", ["Tree Count", "Revenue"])
+    metric_options = ["Tree Count"] if any_pre_2023 else ["Tree Count", "Revenue"]
+    metric = st.sidebar.radio("Select Metric", metric_options, index=0)
 
     sales_filtered = sales_data[(sales_data["Sales Year"].isin(selected_years)) & (sales_data["Tree Height (ft)"].between(height_range[0], height_range[1]))]
 
@@ -179,7 +180,7 @@ elif page == "Historical Sales":
         st.plotly_chart(fig_year_grouped)
 
         if any_pre_2023:
-            st.write("")
+            st.write("(Data Only Available Starting in 2023.)")
         else:
             fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
             st.plotly_chart(fig)
