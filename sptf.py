@@ -122,6 +122,8 @@ elif page == "Historical Sales":
 
     st.sidebar.header("Sales Filters")
 
+    metric = st.sidebar.radio("Select Metric", ["Tree Count", "Revenue"])
+
     years = sorted(sales_data["Sales Year"].dropna().unique())
     selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=years)
 
@@ -143,8 +145,6 @@ elif page == "Historical Sales":
     else:
         selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customer))
 
-    metric = st.sidebar.radio("Select Metric", ["Tree Count", "Revenue"])
-
     sales_filtered = sales_data[(sales_data["Sales Year"].isin(selected_years)) & (sales_data["Tree Height (ft)"].between(height_range[0], height_range[1]))]
 
     if not any_pre_2023:
@@ -163,7 +163,7 @@ elif page == "Historical Sales":
         st.plotly_chart(fig)
 
         if any_pre_2023:
-            st.write("(Data Only Available Starting in 2023.)")
+            st.write("(Data Only Available For Years 2023 and On.)")
         else:
             fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
             st.plotly_chart(fig)
