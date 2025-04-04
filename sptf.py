@@ -162,11 +162,9 @@ elif page == "Historical Sales":
     if metric == "Tree Count":
         st.markdown(f"<h3 style='color:green;'>Total Tree Sales Based on Filter Selections: {sales_filtered['Quantity'].sum()}</h3>", unsafe_allow_html=True)
 
-        # Tree Count by Height
         fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), x="Tree Height (ft)", y="Quantity", labels={"Quantity": "Tree Count"})
         st.plotly_chart(fig)
 
-        # Grouped bar chart by year
         fig_year_grouped = px.bar(
             sales_filtered,
             x="Tree Height (ft)",
@@ -187,12 +185,10 @@ elif page == "Historical Sales":
     elif metric == "Revenue":
         st.markdown(f"<h3 style='color:green;'>Total Revenue Based on Filter Selections: ${sales_filtered['Revenue'].sum():,.2f}</h3>", unsafe_allow_html=True)
 
-        # Revenue by Height
         fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Revenue"].sum().reset_index(), x="Tree Height (ft)", y="Revenue", labels={"Revenue": "Revenue ($)"})
         fig.update_yaxes(tickprefix="$")
         st.plotly_chart(fig)
 
-        # Grouped bar chart by year
         fig_year_grouped = px.bar(
             sales_filtered,
             x="Tree Height (ft)",
