@@ -166,6 +166,7 @@ elif page == "Historical Sales":
         st.plotly_chart(fig)
 
         grouped = sales_filtered.groupby(["Tree Height (ft)", "Sales Year"])["Quantity"].sum().reset_index()
+        grouped["Sales Year"] = grouped["Sales Year"].astype(str)
         fig_year_grouped = px.bar(
             grouped,
             x="Tree Height (ft)",
@@ -191,6 +192,7 @@ elif page == "Historical Sales":
         st.plotly_chart(fig)
 
         grouped = sales_filtered.groupby(["Tree Height (ft)", "Sales Year"])["Revenue"].sum().reset_index()
+        grouped["Sales Year"] = grouped["Sales Year"].astype(str)
         fig_year_grouped = px.bar(
             grouped,
             x="Tree Height (ft)",
