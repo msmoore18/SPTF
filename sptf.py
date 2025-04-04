@@ -130,7 +130,7 @@ elif page == "Historical Sales":
 
     any_pre_2023 = any(yr < 2023 for yr in selected_years)
 
-    st.sidebar.markdown("(The following filters are only available for years 2023 and beyond)")
+    st.sidebar.markdown("(The following filters are unavailable before 2023)")
 
     quality_options = ["A", "B"]
     selected_quality = quality_options
@@ -179,7 +179,7 @@ elif page == "Historical Sales":
         st.plotly_chart(fig_year_grouped)
 
         if any_pre_2023:
-            st.write("(Data Only Available Starting in 2023.)")
+            st.write("")
         else:
             fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
             st.plotly_chart(fig)
