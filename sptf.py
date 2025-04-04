@@ -112,6 +112,17 @@ if page in ["Current Inventory"]:
         tree_summary["Work Completed?"] = ""
         st.dataframe(tree_summary, hide_index=True)
 
+        # Additional individual tree bar plot
+        fig_individual = px.bar(
+            filtered_data,
+            x="Tree Height (ft)",
+            y="Count",
+            color=filtered_data.index.astype(str),
+            labels={"Count": "Tree Count", "index": "Tree"},
+            title="Tree Count by Tree Height (Each Tree as Unique Color)"
+        )
+        st.plotly_chart(fig_individual)
+
 elif page == "Lot Map":
     st.title("Lot Map")
     st.image("map_larger.png")
@@ -122,8 +133,6 @@ elif page == "Historical Sales":
 
     st.sidebar.header("Sales Filters")
 
-    metric = st.sidebar.radio("Select Metric", ["Tree Count", "Revenue (not available for years before 2023)"])
-
     years = sorted(sales_data["Sales Year"].dropna().unique())
     selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=years)
 
@@ -131,7 +140,7 @@ elif page == "Historical Sales":
 
     any_pre_2023 = any(yr < 2023 for yr in selected_years)
 
-    st.sidebar.markdown("(The following filters are not availalbe for years before 2023)")
+    st.sidebar.markdown("(The following filters are only available for years 2023 and beyond)")
 
     quality_options = ["A", "B"]
     selected_quality = quality_options
@@ -146,6 +155,8 @@ elif page == "Historical Sales":
         st.sidebar.selectbox("Select Customer", options=["All"], index=0, disabled=True)
     else:
         selected_customer = st.sidebar.selectbox("Select Customer", options=["All"] + list(customer))
+
+    metric = st.sidebar.radio("Select Metric", ["Tree Count", "Revenue"])
 
     sales_filtered = sales_data[(sales_data["Sales Year"].isin(selected_years)) & (sales_data["Tree Height (ft)"].between(height_range[0], height_range[1]))]
 
@@ -164,8 +175,11 @@ elif page == "Historical Sales":
         fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), x="Tree Height (ft)", y="Quantity", labels={"Quantity": "Tree Count"})
         st.plotly_chart(fig)
 
+        fig_individual = px.bar(sales_filtered, x="Tree Height (ft)", y="Quantity", color=sales_filtered.index.astype(str), title="Individual Tree Sales")
+        st.plotly_chart(fig_individual)
+
         if any_pre_2023:
-            st.write("(Customer Pie Chart Unavailable for years before 2023)")
+            st.write("(Data Only Available Starting in 2023.)")
         else:
             fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
             st.plotly_chart(fig)
@@ -176,6 +190,10 @@ elif page == "Historical Sales":
         fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Revenue"].sum().reset_index(), x="Tree Height (ft)", y="Revenue", labels={"Revenue": "Revenue ($)"})
         fig.update_yaxes(tickprefix="$")
         st.plotly_chart(fig)
+
+        fig_individual = px.bar(sales_filtered, x="Tree Height (ft)", y="Revenue", color=sales_filtered.index.astype(str), title="Individual Tree Revenue")
+        fig_individual.update_yaxes(tickprefix="$")
+        st.plotly_chart(fig_individual)
 
         if any_pre_2023:
             st.write("(Data Only Available Starting in 2023.)")
