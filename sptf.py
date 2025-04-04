@@ -122,7 +122,7 @@ elif page == "Historical Sales":
 
     st.sidebar.header("Sales Filters")
 
-    metric = st.sidebar.radio("Select Metric", ["Tree Count", "Revenue"])
+    metric = st.sidebar.radio("Select Metric", ["Tree Count", "Revenue (not available for years before 2023)"])
 
     years = sorted(sales_data["Sales Year"].dropna().unique())
     selected_years = st.sidebar.multiselect("Select Sales Year(s)", years, default=years)
