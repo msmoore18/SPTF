@@ -171,10 +171,10 @@ elif page == "Historical Sales":
             x="Tree Height (ft)",
             y="Quantity",
             color="Sales Year",
-            barmode="group",
             labels={"Quantity": "Tree Count"},
             title="Tree Sales by Height and Year"
         )
+        fig_year_grouped.update_layout(barmode="group")
         st.plotly_chart(fig_year_grouped)
 
         if any_pre_2023:
@@ -196,10 +196,10 @@ elif page == "Historical Sales":
             x="Tree Height (ft)",
             y="Revenue",
             color="Sales Year",
-            barmode="group",
             labels={"Revenue": "Revenue ($)"},
             title="Revenue by Height and Year"
         )
+        fig_year_grouped.update_layout(barmode="group")
         fig_year_grouped.update_yaxes(tickprefix="$")
         st.plotly_chart(fig_year_grouped)
 
