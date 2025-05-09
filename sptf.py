@@ -179,7 +179,10 @@ elif page == "Historical Sales":
         st.plotly_chart(fig_year_grouped)
 
         if not any_pre_2023:
+            if selected_customer == "All":
             fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
+        else:
+            fig = px.pie(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), names="Tree Height (ft)", values="Quantity", title=f"{selected_customer} - Tree Sales Distribution by Height")
             st.plotly_chart(fig)
     else:
         st.markdown(f"<h3 style='color:green;'>Total Revenue Based on Filter Selections: ${sales_filtered['Revenue'].sum():,.2f}</h3>", unsafe_allow_html=True)
