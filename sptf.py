@@ -1,9 +1,3 @@
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-import msoffcrypto
-import io
-
 # Sidebar navigation
 st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go To", ["Current Inventory", "Historical Sales", "Lot Map", "Planting History"])
@@ -22,6 +16,7 @@ elif page == "Historical Sales":
     ...
 
 elif page == "Planting History":
+    sheets = st.session_state["data"]
     st.title("Planting History")
 
     planting_data = sheets["Planting"].copy()
