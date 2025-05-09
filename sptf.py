@@ -240,7 +240,7 @@ elif page == "Planting History":
         filtered = filtered[filtered["Lot #"] == selected_lot]
 
     grouped = filtered.groupby(["Tree Height (in)", "Year"])["Count"].sum().reset_index()
-    fig1 = px.bar(grouped, x="Tree Height (in)", y="Count", color="Year", title="Trees Planted by Height and Year", labels={"Count": "Trees Planted"})
+    fig1 = px.bar(grouped, x="Tree Height (in)", y="Count", color="Year", color_discrete_sequence=px.colors.qualitative.Safe, title="Trees Planted by Height and Year", labels={"Count": "Trees Planted"})
     fig1.update_layout(barmode="group")
     st.plotly_chart(fig1)
 
