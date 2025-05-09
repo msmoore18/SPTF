@@ -212,3 +212,51 @@ elif page == "Historical Sales":
             fig = px.pie(sales_filtered.groupby("Customer")["Revenue"].sum().reset_index(), names="Customer", values="Revenue", title="Revenue Distribution by Customer")
             fig.update_traces(textinfo='percent+value', texttemplate='%{percent} <br> $%{value:,.0f}')
             st.plotly_chart(fig)
+
+# Inventory Pages
+if page in ["Current Inventory"]:
+    st.sidebar.header("Filter Options")
+    height_range = st.sidebar.slider("Select Tree Height Range (ft)", float(data["Tree Height (ft)"].min()), float(data["Tree Height (ft)"].max()), (float(data["Tree Height (ft)"].min()), float(data["Tree Height (ft)"].max())), 0.5)
+
+    quality_order = ["A", "B", "C", "OC"]
+    available_qualities = [q for q in quality_order if q in data["Quality"].unique()]
+    default_selection = [q for q in ["A", "B", "C"] if q in available_qualities]
+
+    quality_options = st.sidebar.multiselect("Select Quality", options=available_qualities, default=default_selection)
+
+    st.sidebar.markdown("**A** = Good  \n**B** = Needs Pruning  \n**C** = Needs to be Cut  \n**OC** = Overcrowded")
+
+    lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
+    selected_lot = st.sidebar.selectbox("Select Lot (see Lot Map)", options=lot_options)
+
+    if selected_lot == 'All':
+        lots = data["Lot"].unique()
+    else:
+        lots = [selected_lot]
+
+    filtered_data = data[(data["Lot"].isin(lots)) & (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (data["Quality"].isin(quality_options))]
+
+# Planting History
+    if page == "Planting History":
+        st.title("Planting History")
+        st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
+
+        height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
+        fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count')
+        st.plotly_chart(fig)
+
+        height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
+        height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
+        fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
+        st.plotly_chart(fig)
+
+        if selected_lot == 'All':
+            fig_lot = px.bar(filtered_data.groupby("Lot")["Count"].sum().reset_index(), x='Lot', y='Count')
+            st.plotly_chart(fig_lot)
+        else:
+            fig_lot = px.bar(filtered_data.groupby("Row")["Count"].sum().reset_index(), x='Row', y='Count')
+            st.plotly_chart(fig_lot)
+
+        tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
+        tree_summary["Work Completed?"] = ""
+        st.dataframe(tree_summary, hide_index=True)
