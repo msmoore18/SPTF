@@ -206,6 +206,7 @@ elif page == "Planting History":
         st.stop()
     sheets = st.session_state["data"]
     st.title("Planting History")
+    st.markdown(f"<h3 style='color:green;'>Total Tree Planting Count Based on Filter Selections: {filtered['Count'].sum()}</h3>", unsafe_allow_html=True)
 
     planting_data = sheets["Planting"].copy()
     planting_data["Date"] = pd.to_datetime(planting_data["Date"])
