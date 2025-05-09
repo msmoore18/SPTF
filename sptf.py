@@ -206,11 +206,10 @@ elif page == "Historical Sales":
 
         if not any_pre_2023:
             fig = px.pie(
-                sales_filtered.groupby("Tree Height (ft)")["Revenue"].sum().reset_index(),
-                names="Tree Height (ft)",
+                sales_filtered.groupby("Customer")["Revenue"].sum().reset_index(),
+                names="Customer",
                 values="Revenue",
-                title="Revenue Distribution by Tree Height"
-            )
+                title="Revenue Distribution by Customer"
             fig.update_traces(textinfo='percent+value', texttemplate='%{percent} <br> $%{value:,.0f}')
             st.plotly_chart(fig)
 
