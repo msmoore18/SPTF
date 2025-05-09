@@ -183,14 +183,11 @@ elif page == "Historical Sales":
             st.plotly_chart(fig)
     else:
         st.markdown(f"<h3 style='color:green;'>Total Revenue Based on Filter Selections: ${sales_filtered['Revenue'].sum():,.2f}</h3>", unsafe_allow_html=True)
-        fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Revenue"].sum().reset_index(), x="Tree Height (ft)", y="Revenue", labels={"Revenue": "Revenue ($)"})
-        fig.update_yaxes(tickprefix="$")
-        st.plotly_chart(fig)
-
+        
         grouped = sales_filtered.groupby(["Tree Height (ft)", "Sales Year"])["Revenue"].sum().reset_index()
         grouped["Sales Year"] = grouped["Sales Year"].astype(str)
         fig_year_grouped = px.bar(grouped, x="Tree Height (ft)", y="Revenue", color="Sales Year", labels={"Revenue": "Revenue ($)"}, title="Revenue by Height and Year")
-        fig_year_grouped.update_layout(barmode="group")
+        fig_year_grouped.update_layout(barmode="stack")
         fig_year_grouped.update_yaxes(tickprefix="$")
         st.plotly_chart(fig_year_grouped)
 
