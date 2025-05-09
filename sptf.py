@@ -260,13 +260,13 @@ elif page == "Planting History":
     st.sidebar.header("Planting Filters")
     min_height = int(long_df["Tree Height (in)"].min())
     max_height = int(long_df["Tree Height (in)"].max())
-    height_range = st.sidebar.slider("Tree Height Range (in)", min_height, max_height, (min_height, max_height), step=6)
+    new_height_range = st.sidebar.slider("Tree Height Range (in)", min_height, max_height, (min_height, max_height), step=6)
 
     lot_options = ["All"] + sorted(long_df["Lot #"].dropna().unique(), key=lambda x: int(str(x)))
     selected_lot = st.sidebar.selectbox("Select Lot", lot_options)
 
     # Apply filters
-    filtered = long_df[long_df["Tree Height (in)"].between(height_range[0], height_range[1])]
+    filtered = long_df[long_df["Tree Height (in)"].between(new_height_range[0], new_height_range[1])]
     if selected_lot != "All":
         filtered = filtered[filtered["Lot #"] == selected_lot]
 
