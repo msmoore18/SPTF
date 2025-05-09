@@ -241,6 +241,7 @@ elif page == "Planting History":
 
     grouped = filtered.groupby(["Tree Height (in)", "Year"])["Count"].sum().reset_index()
     fig1 = px.bar(grouped, x="Tree Height (in)", y="Count", color="Year", color_discrete_sequence=px.colors.qualitative.Safe, title="Trees Planted by Height and Year", labels={"Count": "Trees Planted"})
+    fig1.update_layout(barmode="stack")
     fig1.update_layout(barmode="group")
     st.plotly_chart(fig1)
 
@@ -249,8 +250,9 @@ elif page == "Planting History":
     st.plotly_chart(fig2)
 
     if selected_lot == "All":
-        lot_group = filtered.groupby("Lot #")["Count"].sum().reset_index()
-        fig3 = px.bar(lot_group, x="Lot #", y="Count", title="Trees Planted by Lot", labels={"Count": "Trees Planted"})
+        lot_group = filtered.groupby(["Lot #", "Year"])["Count"].sum().reset_index()
+        fig3 = px.bar(lot_group, x="Lot #", y="Count", color="Year", title="Trees Planted by Lot", labels={"Count": "Trees Planted"})
+        fig3.update_layout(barmode="stack")
     else:
         row_group = filtered.groupby("Row #")["Count"].sum().reset_index()
         fig3 = px.bar(row_group, x="Row #", y="Count", title=f"Trees Planted by Row in Lot {selected_lot}", labels={"Count": "Trees Planted"})
