@@ -45,8 +45,10 @@ elif page == "Planting History":
     long_df["Count"] = long_df["Count"].astype(int)
 
     st.sidebar.header("Planting Filters")
-    min_height = int(long_df["Tree Height (in)"].dropna().min()) if not long_df["Tree Height (in)"].dropna().empty else 0
-    max_height = int(long_df["Tree Height (in)"].dropna().max()) if not long_df["Tree Height (in)"].dropna().empty else 100
+    min_height_val = long_df["Tree Height (in)"].dropna().min()
+    min_height = int(min_height_val) if pd.notnull(min_height_val) else 0
+    max_height_val = long_df["Tree Height (in)"].dropna().max()
+    max_height = int(max_height_val) if pd.notnull(max_height_val) else 100
     height_range = st.sidebar.slider("Tree Height Range (in)", min_height, max_height, (min_height, max_height), step=6)
 
     lot_options = ["All"] + sorted(long_df["Lot #"].dropna().unique(), key=lambda x: int(str(x)))
@@ -79,3 +81,4 @@ elif page == "Planting History":
         row_group = filtered.groupby("Row #")["Count"].sum().reset_index()
         fig3 = px.bar(row_group, x="Row #", y="Count", title=f"Trees Planted by Row in Lot {selected_lot}", labels={"Count": "Trees Planted"})
     st.plotly_chart(fig3)
+
