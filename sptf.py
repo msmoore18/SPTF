@@ -240,6 +240,7 @@ elif page == "Planting History":
         filtered = filtered[filtered["Lot #"] == selected_lot]
 
     grouped = filtered.groupby(["Tree Height (in)", "Year"])["Count"].sum().reset_index()
+grouped["Year"] = grouped["Year"].astype(str)
     fig1 = px.bar(grouped, x="Tree Height (in)", y="Count", color="Year", color_discrete_sequence=px.colors.qualitative.Safe, title="Trees Planted by Height and Year", labels={"Count": "Trees Planted"})
     fig1.update_layout(barmode="stack")
     fig1.update_traces(marker_line_width=0)
@@ -252,6 +253,7 @@ elif page == "Planting History":
 
     if selected_lot == "All":
         lot_group = filtered.groupby(["Lot #", "Year"])["Count"].sum().reset_index()
+        lot_group["Year"] = lot_group["Year"].astype(str)
         fig3 = px.bar(lot_group, x="Lot #", y="Count", color="Year", title="Trees Planted by Lot", labels={"Count": "Trees Planted"})
         fig3.update_layout(barmode="stack")
     else:
