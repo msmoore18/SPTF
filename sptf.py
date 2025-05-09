@@ -180,9 +180,19 @@ elif page == "Historical Sales":
 
         if not any_pre_2023:
             if selected_customer == "All":
-            fig = px.pie(sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(), names="Customer", values="Quantity", title="Tree Sales Distribution by Customer")
-        else:
-            fig = px.pie(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), names="Tree Height (ft)", values="Quantity", title=f"{selected_customer} - Tree Sales Distribution by Height")
+                fig = px.pie(
+                    sales_filtered.groupby("Customer")["Quantity"].sum().reset_index(),
+                    names="Customer",
+                    values="Quantity",
+                    title="Tree Sales Distribution by Customer"
+                )
+            else:
+                fig = px.pie(
+                    sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(),
+                    names="Tree Height (ft)",
+                    values="Quantity",
+                    title=f"{selected_customer} - Tree Sales Distribution by Height"
+                )
             st.plotly_chart(fig)
     else:
         st.markdown(f"<h3 style='color:green;'>Total Revenue Based on Filter Selections: ${sales_filtered['Revenue'].sum():,.2f}</h3>", unsafe_allow_html=True)
@@ -263,4 +273,3 @@ elif page == "Planting History":
         row_group = filtered.groupby("Row #")["Count"].sum().reset_index()
         fig3 = px.bar(row_group, x="Row #", y="Count", title=f"Trees Planted by Row in Lot {selected_lot}", labels={"Count": "Trees Planted"})
     st.plotly_chart(fig3)
-
