@@ -115,6 +115,7 @@ if page == "Current Inventory":
         st.plotly_chart(fig_lot)
 
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
+    tree_summary["Work Completed?"] = ""
     st.dataframe(tree_summary, hide_index=True)
 
 elif page == "Lot Map":
@@ -248,6 +249,8 @@ elif page == "Planting History":
     long_df["Count"] = long_df["Count"].astype(int)
 
     st.sidebar.header("Planting Filters")
+    year_options = sorted(long_df["Year"].dropna().unique())
+    selected_years = st.sidebar.multiselect("Select Year(s)", options=year_options, default=year_options)
     min_height_val = long_df["Tree Height (in)"].dropna().min()
     min_height = int(min_height_val) if pd.notnull(min_height_val) else 0
     max_height_val = long_df["Tree Height (in)"].dropna().max()
@@ -257,7 +260,7 @@ elif page == "Planting History":
     lot_options = ["All"] + sorted(long_df["Lot #"].dropna().unique(), key=lambda x: int(str(x)))
     selected_lot = st.sidebar.selectbox("Select Lot", lot_options)
 
-    filtered = long_df[long_df["Tree Height (in)"].between(height_range[0], height_range[1])]
+    filtered = long_df[long_df["Tree Height (in)"].between(height_range[0], height_range[1]) & long_df["Year"].isin(selected_years)]
     if selected_lot != "All":
         filtered = filtered[filtered["Lot #"] == selected_lot]
 
