@@ -175,7 +175,7 @@ elif page == "Historical Sales":
         grouped["Sales Year"] = grouped["Sales Year"].astype(str)
         fig_year_grouped = px.bar(grouped, x="Tree Height (ft)", y="Quantity", color="Sales Year", labels={"Quantity": "Tree Count"}, title="Tree Sales by Height and Year")
         fig_year_grouped.update_layout(barmode="stack")
-        fig_year_grouped.update_layout(barmode="group")
+        fig_year_grouped.update_layout(barmode="stack")
         st.plotly_chart(fig_year_grouped)
 
         if not any_pre_2023:
