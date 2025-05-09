@@ -115,7 +115,6 @@ if page == "Current Inventory":
         st.plotly_chart(fig_lot)
 
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
-    tree_summary["Work Completed?"] = ""
     st.dataframe(tree_summary, hide_index=True)
 
 elif page == "Lot Map":
