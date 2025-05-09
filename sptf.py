@@ -263,3 +263,4 @@ elif page == "Planting History":
         row_group = filtered.groupby("Row #")["Count"].sum().reset_index()
         fig3 = px.bar(row_group, x="Row #", y="Count", title=f"Trees Planted by Row in Lot {selected_lot}", labels={"Count": "Trees Planted"})
     st.plotly_chart(fig3)
+
