@@ -242,7 +242,8 @@ elif page == "Planting History":
     grouped = filtered.groupby(["Tree Height (in)", "Year"])["Count"].sum().reset_index()
     fig1 = px.bar(grouped, x="Tree Height (in)", y="Count", color="Year", color_discrete_sequence=px.colors.qualitative.Safe, title="Trees Planted by Height and Year", labels={"Count": "Trees Planted"})
     fig1.update_layout(barmode="stack")
-    fig1.update_layout(barmode="group")
+    fig1.update_traces(marker_line_width=0)
+    fig1.update_coloraxes(showscale=False)
     st.plotly_chart(fig1)
 
     pie_data = filtered.groupby("Tree Height (in)")["Count"].sum().reset_index()
