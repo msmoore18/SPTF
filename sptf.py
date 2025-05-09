@@ -63,7 +63,7 @@ else:
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go To", ["Current Inventory", "Historical Sales", "Lot Map"])
+page = st.sidebar.radio("Go To", ["Current Inventory", "Historical Sales", "Lot Map", "Planting History"])
 
 # Inventory Pages
 if page in ["Current Inventory"]:
