@@ -45,8 +45,8 @@ elif page == "Planting History":
     long_df["Count"] = long_df["Count"].astype(int)
 
     st.sidebar.header("Planting Filters")
-    min_height = int(long_df["Tree Height (in)"].min())
-    max_height = int(long_df["Tree Height (in)"].max())
+    min_height = int(long_df["Tree Height (in)"].dropna().min()) if not long_df["Tree Height (in)"].dropna().empty else 0
+    max_height = int(long_df["Tree Height (in)"].dropna().max()) if not long_df["Tree Height (in)"].dropna().empty else 100
     height_range = st.sidebar.slider("Tree Height Range (in)", min_height, max_height, (min_height, max_height), step=6)
 
     lot_options = ["All"] + sorted(long_df["Lot #"].dropna().unique(), key=lambda x: int(str(x)))
