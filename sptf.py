@@ -237,26 +237,62 @@ if page in ["Current Inventory"]:
     filtered_data = data[(data["Lot"].isin(lots)) & (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (data["Quality"].isin(quality_options))]
 
 # Planting History
-    if page == "Planting History":
-        st.title("Planting History")
-        st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
+elif page == "Planting History":
+    st.title("Planting History")
 
-        height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
-        fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count')
-        st.plotly_chart(fig)
+    planting_data = sheets["Planting"].copy()
+    planting_data["Date"] = pd.to_datetime(planting_data["Date"])
+    planting_data["Year"] = planting_data["Date"].dt.year
 
-        height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
-        height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
-        fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
-        st.plotly_chart(fig)
+    # Convert from wide to long format
+    long_df = planting_data.melt(
+        id_vars=["Date", "Year", "Lot #", "Row #"],
+        var_name="Tree Height (in)",
+        value_name="Count"
+    )
 
-        if selected_lot == 'All':
-            fig_lot = px.bar(filtered_data.groupby("Lot")["Count"].sum().reset_index(), x='Lot', y='Count')
-            st.plotly_chart(fig_lot)
-        else:
-            fig_lot = px.bar(filtered_data.groupby("Row")["Count"].sum().reset_index(), x='Row', y='Count')
-            st.plotly_chart(fig_lot)
+    # Clean and filter
+    long_df["Tree Height (in)"] = pd.to_numeric(long_df["Tree Height (in)"], errors="coerce")
+    long_df = long_df.dropna(subset=["Tree Height (in)", "Count"])
+    long_df["Count"] = long_df["Count"].astype(int)
 
-        tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
-        tree_summary["Work Completed?"] = ""
-        st.dataframe(tree_summary, hide_index=True)
+    # Sidebar filters
+    st.sidebar.header("Planting Filters")
+    min_height = int(long_df["Tree Height (in)"].min())
+    max_height = int(long_df["Tree Height (in)"].max())
+    height_range = st.sidebar.slider("Tree Height Range (in)", min_height, max_height, (min_height, max_height), step=6)
+
+    lot_options = ["All"] + sorted(long_df["Lot #"].dropna().unique(), key=lambda x: int(str(x)))
+    selected_lot = st.sidebar.selectbox("Select Lot", lot_options)
+
+    # Apply filters
+    filtered = long_df[long_df["Tree Height (in)"].between(height_range[0], height_range[1])]
+    if selected_lot != "All":
+        filtered = filtered[filtered["Lot #"] == selected_lot]
+
+    # Plot 1: Trees Planted by Height and Year
+    grouped = filtered.groupby(["Tree Height (in)", "Year"])["Count"].sum().reset_index()
+    fig1 = px.bar(
+        grouped,
+        x="Tree Height (in)",
+        y="Count",
+        color="Year",
+        title="Trees Planted by Height and Year",
+        labels={"Count": "Trees Planted"}
+    )
+    fig1.update_layout(barmode="group")
+    st.plotly_chart(fig1)
+
+    # Plot 2: Pie Chart of Tree Heights
+    pie_data = filtered.groupby("Tree Height (in)")["Count"].sum().reset_index()
+    fig2 = px.pie(pie_data, names="Tree Height (in)", values="Count", title="Distribution of Trees by Height (in)")
+    st.plotly_chart(fig2)
+
+    # Plot 3: Bar by Lot or Row
+    if selected_lot == "All":
+        lot_group = filtered.groupby("Lot #")["Count"].sum().reset_index()
+        fig3 = px.bar(lot_group, x="Lot #", y="Count", title="Trees Planted by Lot", labels={"Count": "Trees Planted"})
+    else:
+        row_group = filtered.groupby("Row #")["Count"].sum().reset_index()
+        fig3 = px.bar(row_group, x="Row #", y="Count", title=f"Trees Planted by Row in Lot {selected_lot}", labels={"Count": "Trees Planted"})
+    st.plotly_chart(fig3)
