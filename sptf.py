@@ -211,7 +211,7 @@ elif page == "Historical Sales":
                 values="Revenue",
                 title="Revenue Distribution by Customer"
             fig.update_traces(textinfo='percent+value', texttemplate='%{percent} <br> $%{value:,.0f}')
-            st.plotly_chart(fig)
+            st.plotly_chart(fig))
 
 elif page == "Planting History":
     if "data" not in st.session_state:
