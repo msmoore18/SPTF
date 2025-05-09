@@ -115,6 +115,7 @@ if page == "Current Inventory":
         st.plotly_chart(fig_lot)
 
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
+    tree_summary["Work Completed?"] = ""
     st.dataframe(tree_summary, hide_index=True)
 
 elif page == "Lot Map":
@@ -169,9 +170,7 @@ elif page == "Historical Sales":
 
     if metric == "Tree Count":
         st.markdown(f"<h3 style='color:green;'>Total Tree Sales Based on Filter Selections: {sales_filtered['Quantity'].sum()}</h3>", unsafe_allow_html=True)
-        fig = px.bar(sales_filtered.groupby("Tree Height (ft)")["Quantity"].sum().reset_index(), x="Tree Height (ft)", y="Quantity", labels={"Quantity": "Tree Count"})
-        st.plotly_chart(fig)
-
+        
         grouped = sales_filtered.groupby(["Tree Height (ft)", "Sales Year"])["Quantity"].sum().reset_index()
         grouped["Sales Year"] = grouped["Sales Year"].astype(str)
         fig_year_grouped = px.bar(grouped, x="Tree Height (ft)", y="Quantity", color="Sales Year", labels={"Quantity": "Tree Count"}, title="Tree Sales by Height and Year")
