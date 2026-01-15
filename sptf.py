@@ -79,7 +79,7 @@ if page == "Current Inventory":
 
     quality_order = ["A", "B", "C", "OC"]
     available_qualities = [q for q in quality_order if q in data["Quality"].unique()]
-    default_selection = [q for q in ["A", "B", "C"] if q in available_qualities]
+    default_selection = [q for q in ["A", "B"] if q in available_qualities]
 
     quality_options = st.sidebar.multiselect("Select Quality", options=available_qualities, default=default_selection)
 
