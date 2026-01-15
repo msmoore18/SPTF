@@ -109,7 +109,7 @@ if page == "Current Inventory":
     height_group = filtered_data.groupby(["Tree Height (ft)", "Inventory Year"])["Count"].sum().reset_index()
     height_group["Inventory Year"] = height_group["Inventory Year"].astype(str)
     fig = px.bar(height_group, x='Tree Height (ft)', y='Count', color='Inventory Year')
-    fig.update_layout(barmode="stack")
+    fig.update_layout(barmode="group")
     st.plotly_chart(fig)
 
     # Create separate pie charts for each selected year
@@ -124,13 +124,13 @@ if page == "Current Inventory":
         lot_group = filtered_data.groupby(["Lot", "Inventory Year"])["Count"].sum().reset_index()
         lot_group["Inventory Year"] = lot_group["Inventory Year"].astype(str)
         fig_lot = px.bar(lot_group, x='Lot', y='Count', color='Inventory Year')
-        fig_lot.update_layout(barmode="stack")
+        fig_lot.update_layout(barmode="group")
         st.plotly_chart(fig_lot)
     else:
         row_group = filtered_data.groupby(["Row", "Inventory Year"])["Count"].sum().reset_index()
         row_group["Inventory Year"] = row_group["Inventory Year"].astype(str)
         fig_lot = px.bar(row_group, x='Row', y='Count', color='Inventory Year')
-        fig_lot.update_layout(barmode="stack")
+        fig_lot.update_layout(barmode="group")
         st.plotly_chart(fig_lot)
 
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
