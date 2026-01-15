@@ -100,22 +100,37 @@ if page == "Current Inventory":
     filtered_data = data[(data["Lot"].isin(lots)) & (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (data["Quality"].isin(quality_options)) & (data["Inventory Year"].isin(selected_years))]
 
     st.title("Current Tree Inventory")
-    st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
+    # Display total count by year
+    year_totals = filtered_data.groupby("Inventory Year")["Count"].sum().sort_index()
+    total_text = " | ".join([f"{int(year)}: {count}" for year, count in year_totals.items()])
+    st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {total_text}</h3>", unsafe_allow_html=True)
 
-    height_group = filtered_data.groupby("Tree Height (ft)")["Count"].sum()
-    fig = px.bar(height_group.reset_index(), x='Tree Height (ft)', y='Count')
+    # Bar chart with year colors
+    height_group = filtered_data.groupby(["Tree Height (ft)", "Inventory Year"])["Count"].sum().reset_index()
+    height_group["Inventory Year"] = height_group["Inventory Year"].astype(str)
+    fig = px.bar(height_group, x='Tree Height (ft)', y='Count', color='Inventory Year')
+    fig.update_layout(barmode="stack")
     st.plotly_chart(fig)
 
-    height_bins = pd.cut(filtered_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
-    height_distribution = filtered_data.groupby(height_bins)["Count"].sum().reset_index()
-    fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count")
-    st.plotly_chart(fig)
+    # Create separate pie charts for each selected year
+    for year in sorted(selected_years):
+        year_data = filtered_data[filtered_data["Inventory Year"] == year]
+        height_bins = pd.cut(year_data["Tree Height (ft)"], bins=[0, 5, 10, 15, 20, float('inf')], labels=["0-5ft", "6-10ft", "11-15ft", "16-20ft", ">20ft"])
+        height_distribution = year_data.groupby(height_bins)["Count"].sum().reset_index()
+        fig = px.pie(height_distribution, names="Tree Height (ft)", values="Count", title=f"Tree Distribution by Height ({int(year)})")
+        st.plotly_chart(fig)
 
     if selected_lot == 'All':
-        fig_lot = px.bar(filtered_data.groupby("Lot")["Count"].sum().reset_index(), x='Lot', y='Count')
+        lot_group = filtered_data.groupby(["Lot", "Inventory Year"])["Count"].sum().reset_index()
+        lot_group["Inventory Year"] = lot_group["Inventory Year"].astype(str)
+        fig_lot = px.bar(lot_group, x='Lot', y='Count', color='Inventory Year')
+        fig_lot.update_layout(barmode="stack")
         st.plotly_chart(fig_lot)
     else:
-        fig_lot = px.bar(filtered_data.groupby("Row")["Count"].sum().reset_index(), x='Row', y='Count')
+        row_group = filtered_data.groupby(["Row", "Inventory Year"])["Count"].sum().reset_index()
+        row_group["Inventory Year"] = row_group["Inventory Year"].astype(str)
+        fig_lot = px.bar(row_group, x='Row', y='Count', color='Inventory Year')
+        fig_lot.update_layout(barmode="stack")
         st.plotly_chart(fig_lot)
 
     tree_summary = filtered_data.groupby(["Quality", "Lot", "Row", "Tree Height (ft)"])["Count"].sum().reset_index()
