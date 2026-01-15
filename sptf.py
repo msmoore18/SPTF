@@ -77,7 +77,7 @@ if page == "Current Inventory":
         key="inventory_height_slider_unique"
     )
 
-    quality_order = ["A", "B", "C", "OC"]
+    quality_order = ["A", "B", "Cut"]
     available_qualities = [q for q in quality_order if q in data["Quality"].unique()]
     default_selection = [q for q in ["A", "B"] if q in available_qualities]
 
