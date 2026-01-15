@@ -94,7 +94,7 @@ if page == "Current Inventory":
         lots = [selected_lot]
 
     inventory_years = sorted(data["Inventory Year"].dropna().unique())
-    default_years = inventory_years[-1:] if len(inventory_years) >= 1 else inventory_years
+    default_years = inventory_years  # Display all years by default
     selected_years = st.sidebar.multiselect("Select Inventory Year(s)", options=inventory_years, default=default_years)
 
     filtered_data = data[(data["Lot"].isin(lots)) & (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (data["Quality"].isin(quality_options)) & (data["Inventory Year"].isin(selected_years))]
@@ -193,8 +193,7 @@ elif page == "Historical Sales":
         grouped = sales_filtered.groupby(["Tree Height (ft)", "Sales Year"])["Quantity"].sum().reset_index()
         grouped["Sales Year"] = grouped["Sales Year"].astype(str)
         fig_year_grouped = px.bar(grouped, x="Tree Height (ft)", y="Quantity", color="Sales Year", labels={"Quantity": "Tree Count"}, title="Tree Sales by Height and Year")
-        fig_year_grouped.update_layout(barmode="stack")
-        fig_year_grouped.update_layout(barmode="stack")
+        fig_year_grouped.update_layout(barmode="group")
         st.plotly_chart(fig_year_grouped)
 
         if not any_pre_2023:
@@ -219,7 +218,7 @@ elif page == "Historical Sales":
         grouped = sales_filtered.groupby(["Tree Height (ft)", "Sales Year"])["Revenue"].sum().reset_index()
         grouped["Sales Year"] = grouped["Sales Year"].astype(str)
         fig_year_grouped = px.bar(grouped, x="Tree Height (ft)", y="Revenue", color="Sales Year", labels={"Revenue": "Revenue ($)"}, title="Revenue by Height and Year")
-        fig_year_grouped.update_layout(barmode="stack")
+        fig_year_grouped.update_layout(barmode="group")
         fig_year_grouped.update_yaxes(tickprefix="$")
         st.plotly_chart(fig_year_grouped)
 
@@ -287,9 +286,8 @@ elif page == "Planting History":
 
     grouped = filtered.groupby(["Tree Height (in)", "Year"])["Count"].sum().reset_index()
     grouped["Year"] = grouped["Year"].astype(str)
-    grouped["Year"] = grouped["Year"].astype(str)
     fig1 = px.bar(grouped, x="Tree Height (in)", y="Count", color="Year", color_discrete_sequence=px.colors.qualitative.Safe, title="Trees Planted by Height and Year", labels={"Count": "Trees Planted"})
-    fig1.update_layout(barmode="stack")
+    fig1.update_layout(barmode="group")
     fig1.update_traces(marker_line_width=0)
     fig1.update_layout(legend_title_text="Year")
     st.plotly_chart(fig1)
@@ -302,7 +300,7 @@ elif page == "Planting History":
         lot_group = filtered.groupby(["Lot #", "Year"])["Count"].sum().reset_index()
         lot_group["Year"] = lot_group["Year"].astype(str)
         fig3 = px.bar(lot_group, x="Lot #", y="Count", color="Year", title="Trees Planted by Lot", labels={"Count": "Trees Planted"})
-        fig3.update_layout(barmode="stack")
+        fig3.update_layout(barmode="group")
     else:
         row_group = filtered.groupby("Row #")["Count"].sum().reset_index()
         fig3 = px.bar(row_group, x="Row #", y="Count", title=f"Trees Planted by Row in Lot {selected_lot}", labels={"Count": "Trees Planted"})
