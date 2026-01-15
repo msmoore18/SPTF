@@ -93,7 +93,11 @@ if page == "Current Inventory":
     else:
         lots = [selected_lot]
 
-    filtered_data = data[(data["Lot"].isin(lots)) & (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (data["Quality"].isin(quality_options))]
+    inventory_years = sorted(data["Inventory Year"].dropna().unique())
+    default_years = inventory_years[-1:] if len(inventory_years) >= 1 else inventory_years
+    selected_years = st.sidebar.multiselect("Select Inventory Year(s)", options=inventory_years, default=default_years)
+
+    filtered_data = data[(data["Lot"].isin(lots)) & (data["Tree Height (ft)"].between(height_range[0], height_range[1])) & (data["Quality"].isin(quality_options)) & (data["Inventory Year"].isin(selected_years))]
 
     st.title("Current Tree Inventory")
     st.markdown(f"<h3 style='color:green;'>Total Tree Count Based on Filter Selections: {filtered_data['Count'].sum()}</h3>", unsafe_allow_html=True)
