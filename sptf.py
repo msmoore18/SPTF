@@ -83,7 +83,7 @@ if page == "Current Inventory":
 
     quality_options = st.sidebar.multiselect("Select Quality", options=available_qualities, default=default_selection)
 
-    st.sidebar.markdown("**A** = Good  \n**B** = Needs Pruning  \n**C** = Needs to be Cut  \n**OC** = Overcrowded")
+    st.sidebar.markdown("**A** = Good  \n**B** = Needs Pruning")
 
     lot_options = ['All'] + sorted(data["Lot"].unique(), key=lambda x: int(str(x)))
     selected_lot = st.sidebar.selectbox("Select Lot (see Lot Map)", options=lot_options)
